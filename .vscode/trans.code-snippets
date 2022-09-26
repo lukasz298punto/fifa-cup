@@ -1,0 +1,26 @@
+{
+	"trans1": {
+		"prefix": "tt",
+		"body": [
+			"{t($TM_SELECTED_TEXT)}",
+		],
+		"description": "Trans",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	},
+	"trans3": {
+		"prefix": "t1",
+		"body": [
+			"t($TM_SELECTED_TEXT)",
+		],
+		"description": "Trans",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	},
+	"trans2": {
+		"prefix": "t2",
+		"body": [
+			"t('${1}')",
+		],
+		"description": "Trans",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	},
+}

@@ -1,0 +1,13 @@
+{
+	"test": {
+		"key": "util.useCallback",
+		"prefix": "uc",
+		"body": [
+			"",
+			"const ${1:callback} = useCallback(() => {}, []);",
+			"",
+		],
+		"description": "Use effect",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	}
+}

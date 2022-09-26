@@ -1,0 +1,13 @@
+{
+	"test": {
+		"key": "util.useEffect",
+		"prefix": "ue",
+		"body": [
+			"",
+			"useEffect(() => {}, []);",
+			"",
+		],
+		"description": "Use effect",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	}
+}

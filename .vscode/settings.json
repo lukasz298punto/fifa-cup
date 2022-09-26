@@ -1,0 +1,24 @@
+{
+    "cSpell.words": [
+        "antd",
+        "boardgrades",
+        "Braft",
+        "clsx",
+        "EUWID",
+        "fefco",
+        "grammage",
+        "Popconfirm",
+        "PROCESOW",
+        "przepuklenie",
+        "quokalk",
+        "Schrenz",
+        "Sortenlista",
+        "Witron",
+        "Witrona",
+        "Witronie",
+        "ZARZADZANIE"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.formatOnSave": true,
+    "git.branchProtection": ["dev", "test", "master"]
+}

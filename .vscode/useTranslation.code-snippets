@@ -1,0 +1,14 @@
+{
+	"test": {
+		"key": "util.useTranslation",
+		"prefix": "ut",
+		"body": [
+			"import { useTranslation } from 'react-i18next';",
+			"",
+			"const { t } = useTranslation();",
+			"",
+		],
+		"description": "Use translation",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	}
+}

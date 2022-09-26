@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Firefox (Attach)",
+            "pathMappings": [
+                {
+                    "url": "http://localhost/app/src/components",
+                    "path": "${workspaceFolder}/src/components"
+                }
+            ]
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Firefox",
+            "url": "http://localhost",
+            "webRoot": "${workspaceFolder}/src",
+            "pathMappings": [
+                {
+                    "url": "http://localhost/app/src/components",
+                    "path": "${workspaceFolder}/src/components"
+                }
+            ]
+        },
+        {
+            "name": "Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/src",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            }
+        }
+    ]
+}

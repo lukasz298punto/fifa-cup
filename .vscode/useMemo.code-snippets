@@ -1,0 +1,15 @@
+{
+	"test": {
+		"key": "util.useMemo",
+		"prefix": "um",
+		"body": [
+			"",
+			"const ${1:memo} = useMemo(() => {",
+			"    return;",
+			"}, []);",
+			"",
+		],
+		"description": "Use memo",
+		"scope": "typescript,typescriptreact,javascript,javascriptreact"
+	}
+}

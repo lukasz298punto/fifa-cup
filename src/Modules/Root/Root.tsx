@@ -1,11 +1,10 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
-import './root.css';
-import 'locales/config';
-import { useTranslation } from 'react-i18next';
+import { CssBaseline } from '@mui/material';
+import { green } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { green, purple, lightGreen } from '@mui/material/colors';
-import { Button, CssBaseline } from '@mui/material';
-import Dashboard from './Dashboard';
+import 'locales/config';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import Router from 'routing/Router';
+import './root.css';
 
 const theme = createTheme({
     palette: {
@@ -18,13 +17,11 @@ const theme = createTheme({
 const queryClient = new QueryClient();
 
 function Root() {
-    const { t } = useTranslation();
-
     return (
         <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <Dashboard />
+                <Router />
             </ThemeProvider>
         </QueryClientProvider>
     );
