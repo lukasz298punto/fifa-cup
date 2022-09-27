@@ -2243,6 +2243,11 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
+"@react-query-firebase/auth@^1.0.0-dev.2":
+  version "1.0.0-dev.2"
+  resolved "https://registry.yarnpkg.com/@react-query-firebase/auth/-/auth-1.0.0-dev.2.tgz#459572fe331e178e9e61bd3a0f3db215c31c2b8c"
+  integrity sha512-qfr2fV3N/fvtcX0xPTTLRB0gyxh5iPPXnEVnV8Q4fGaKsfp2ASJayMoOW6uxhCL3dIYuWD6u/ud3fgtuZGTdQA==
+
 "@react-query-firebase/database@^1.0.0-dev.2":
   version "1.0.0-dev.2"
   resolved "https://registry.yarnpkg.com/@react-query-firebase/database/-/database-1.0.0-dev.2.tgz#dbc4bb635de3ea00ecc34e239c7e4d0292d07fc8"

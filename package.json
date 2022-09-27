@@ -8,6 +8,7 @@
         "@emotion/styled": "^11.10.4",
         "@mui/icons-material": "^5.10.6",
         "@mui/material": "^5.10.6",
+        "@react-query-firebase/auth": "^1.0.0-dev.2",
         "@react-query-firebase/database": "^1.0.0-dev.2",
         "@react-query-firebase/firestore": "^1.0.0-dev.7",
         "@testing-library/jest-dom": "^5.16.5",

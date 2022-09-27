@@ -1,15 +1,17 @@
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import { Typography } from '@mui/material';
+import { brown, grey, yellow } from '@mui/material/colors';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { Title } from 'components/Title';
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
-import { grey, brown, yellow } from '@mui/material/colors';
+import { useFirestoreDocument } from '@react-query-firebase/firestore';
+import { Title } from 'components/Title';
+import { firestore } from 'config/firebase';
+import { doc } from 'firebase/firestore';
 
 function createData(
     id: number,
@@ -56,6 +58,11 @@ const rows2 = [
 ];
 
 function Home() {
+    const ref123 = doc(firestore, 'players', 'NqEQb9V0c9JPxDvKWP3o');
+    const product = useFirestoreDocument(['players', 'NqEQb9V0c9JPxDvKWP3o'], ref123);
+
+    console.log(product, 'product');
+
     return (
         <Grid container spacing={3}>
             {/* Chart */}
