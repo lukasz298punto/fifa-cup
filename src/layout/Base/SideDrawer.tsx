@@ -24,6 +24,9 @@ import { useTranslation } from 'react-i18next';
 import HomeIcon from '@mui/icons-material/Home';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import AppsIcon from '@mui/icons-material/Apps';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -95,50 +98,38 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                 <Link to={routes.PLAYER_LIST.path}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <AppsIcon />
+                            <PeopleIcon />
                         </ListItemIcon>
                         <ListItemText primary={t('List graczy')} />
                     </ListItemButton>
                 </Link>
                 <ListItemButton>
                     <ListItemIcon>
-                        <PeopleIcon />
+                        <EmojiEventsIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Customers" />
+                    <ListItemText primary={t('Turnieje')} />
                 </ListItemButton>
                 <ListItemButton>
                     <ListItemIcon>
                         <BarChartIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Reports" />
-                </ListItemButton>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <LayersIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Integrations" />
+                    <ListItemText primary={t('Statystyki')} />
                 </ListItemButton>
                 <Divider sx={{ my: 1 }} />
                 <ListSubheader component="div" inset>
-                    Saved reports
+                    {t('Tworzenie')}
                 </ListSubheader>
                 <ListItemButton>
                     <ListItemIcon>
-                        <AssignmentIcon />
+                        <AddCardIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Current month" />
+                    <ListItemText primary={t('Nowy turniej')} />
                 </ListItemButton>
                 <ListItemButton>
                     <ListItemIcon>
-                        <AssignmentIcon />
+                        <PersonAddIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Last quarter" />
-                </ListItemButton>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <AssignmentIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Year-end sale" />
+                    <ListItemText primary={t('Nowy zawodnik')} />
                 </ListItemButton>
             </List>
         </Drawer>

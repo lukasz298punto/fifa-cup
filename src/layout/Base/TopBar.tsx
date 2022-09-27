@@ -1,10 +1,10 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { AdminSettings } from 'Modules/LoginModal';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Fn } from 'types/global';
@@ -62,9 +62,7 @@ function TopBar({ toggleDrawer, drawerOpen }: Props) {
                 <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                     {t('Turniej Fifa')}
                 </Typography>
-                <IconButton color="inherit">
-                    <SettingsIcon />
-                </IconButton>
+                <AdminSettings />
             </Toolbar>
         </AppBar>
     );
