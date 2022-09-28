@@ -11,13 +11,13 @@ import { useAuthUser } from '@react-query-firebase/auth';
 import { auth } from 'config/firebase';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { get } from 'lodash';
-import * as React from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function AdminSettings() {
-    const [open, setOpen] = React.useState(false);
-    const [password, setPassword] = React.useState('');
-    const [error, setError] = React.useState('');
+    const [open, setOpen] = useState(false);
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const user = useAuthUser(['user'], auth);
     const email = user?.data?.email;
 

@@ -116,15 +116,15 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                     <ListItemText primary={t('Statystyki')} />
                 </ListItemButton>
                 <Divider sx={{ my: 1 }} />
-                <ListSubheader component="div" inset>
-                    {t('Tworzenie')}
-                </ListSubheader>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <AddCardIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={t('Nowy turniej')} />
-                </ListItemButton>
+
+                <Link to={routes.CUP_CREATOR.path}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <AddCardIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('Nowy turniej')} />
+                    </ListItemButton>
+                </Link>
                 <ListItemButton>
                     <ListItemIcon>
                         <PersonAddIcon />

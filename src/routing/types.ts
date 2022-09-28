@@ -1,5 +1,5 @@
 export type RouteList = {
-    [Property in 'HOME' | 'PLAYER_LIST']: RouteConfig;
+    [Property in 'HOME' | 'PLAYER_LIST' | 'CUP_CREATOR']: RouteConfig;
 };
 
 type PageComponent = () => JSX.Element;
