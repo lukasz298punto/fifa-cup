@@ -16,7 +16,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { generatePath, Link } from 'react-router-dom';
 import { routes } from 'routing/routes';
 import { Fn } from 'types/global';
 import { drawerWidth } from './Base';
@@ -27,6 +27,8 @@ import AppsIcon from '@mui/icons-material/Apps';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import AddToDriveIcon from '@mui/icons-material/AddToDrive';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -95,7 +97,7 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                     </ListItemButton>
                 </Link>
 
-                <Link to={routes.PLAYER_LIST.path}>
+                <Link to={routes.PLAYERS.path}>
                     <ListItemButton>
                         <ListItemIcon>
                             <PeopleIcon />
@@ -107,7 +109,7 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                     <ListItemIcon>
                         <EmojiEventsIcon />
                     </ListItemIcon>
-                    <ListItemText primary={t('Turnieje')} />
+                    <ListItemText primary={t('Lista turniejów')} />
                 </ListItemButton>
                 <ListItemButton>
                     <ListItemIcon>
@@ -117,7 +119,7 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                 </ListItemButton>
                 <Divider sx={{ my: 1 }} />
 
-                <Link to={routes.CUP_CREATOR.path}>
+                <Link to={routes.TOURNAMENT.path}>
                     <ListItemButton>
                         <ListItemIcon>
                             <AddCardIcon />
@@ -125,12 +127,22 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                         <ListItemText primary={t('Nowy turniej')} />
                     </ListItemButton>
                 </Link>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <PersonAddIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={t('Nowy zawodnik')} />
-                </ListItemButton>
+                <Link to={generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <AddToDriveIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('Nowy schemat')} />
+                    </ListItemButton>
+                </Link>
+                <Link to={routes.SCHEMA_LIST.path}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <FormatListBulletedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('Lista schematów')} />
+                    </ListItemButton>
+                </Link>
             </List>
         </Drawer>
     );

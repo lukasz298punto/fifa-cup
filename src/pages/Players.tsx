@@ -31,7 +31,7 @@ const rows = [
     createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-function PlayerList() {
+function Players() {
     return (
         // <Paper
         //     sx={{
@@ -77,4 +77,4 @@ function PlayerList() {
         // </Paper>
     );
 }
-export default PlayerList;
+export default Players;

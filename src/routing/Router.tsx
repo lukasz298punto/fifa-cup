@@ -1,3 +1,4 @@
+import { CircularProgress } from '@mui/material';
 import { Base } from 'layout/Base';
 import { map } from 'lodash';
 import { NotFound } from 'pages';
@@ -17,7 +18,7 @@ function Router() {
                             key={path}
                             path={path}
                             element={
-                                <React.Suspense fallback={'ladowanie....'}>
+                                <React.Suspense fallback={<CircularProgress size={24} />}>
                                     <Component />
                                 </React.Suspense>
                             }

@@ -4,6 +4,7 @@ import {
     FormHelperText,
     FormLabel,
     Grid,
+    InputLabel,
     MenuItem,
     Paper,
     Radio,
@@ -20,25 +21,27 @@ import {
 import clsx from 'clsx';
 import { groupSymbol } from 'constants/global';
 import { isEmpty, map, range, size } from 'lodash';
-import { SchemaFormInput } from 'pages/CupCreator';
-import { useEffect } from 'react';
+import { SchemaFormInput } from 'pages/SchemaDetail';
+import React, { useEffect } from 'react';
 import { Control, Controller, FieldArrayWithId, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import PromotionBlock from './PromotionBlock';
 
 type Props = {
     control: Control<SchemaFormInput, any>;
     index: number;
     visible: boolean;
+    disabled: boolean;
     field: FieldArrayWithId<SchemaFormInput, 'phases', 'formId'>;
 };
 
-function SchemaPhase({ control, index, field, visible }: Props) {
+function SchemaPhase({ control, index, field, visible, disabled }: Props) {
     const { t } = useTranslation();
 
     const groupCount = useWatch({ control, name: `phases.${index}.groupCount` });
     const isGroupStage = !!Number(useWatch({ control, name: `phases.${index}.isGroupStage` }));
 
-    const { fields, append, prepend, remove, swap, move, insert, replace } = useFieldArray({
+    const { fields, append, prepend, remove, swap, move, insert, replace, update } = useFieldArray({
         control,
         name: `phases.${index}.groups`,
         keyName: 'formId',
@@ -46,17 +49,33 @@ function SchemaPhase({ control, index, field, visible }: Props) {
 
     useEffect(() => {
         if (groupCount) {
-            replace(map(range(0, groupCount), () => ({ playerCount: 3, promotion: 3 })));
+            replace(map(range(0, groupCount), () => ({ playerCount: 3, promotion: 1 })));
         }
     }, [groupCount, replace]);
 
     return (
-        <Grid
-            container
-            spacing={2}
-            key={field.formId}
-            className={clsx(!visible && 'hidden', 'mt-4')}
-        >
+        <Grid container spacing={2} className={clsx(!visible && 'hidden', 'mt-4')}>
+            <Grid item xs={12}>
+                <FormControl>
+                    <FormLabel>{t('Nazwa fazy')}</FormLabel>
+                    <Controller
+                        defaultValue={field.name}
+                        name={`phases.${index}.name`}
+                        control={control}
+                        rules={{ required: t('To pole jest wymagane') }}
+                        render={({ field, fieldState: { error } }) => (
+                            <TextField
+                                disabled={disabled}
+                                variant="outlined"
+                                {...field}
+                                error={!!error}
+                                helperText={error?.message || ''}
+                                size="small"
+                            />
+                        )}
+                    />
+                </FormControl>
+            </Grid>
             <Grid item xs={12}>
                 <FormControl>
                     <FormLabel>{t('Typ fazy')}</FormLabel>
@@ -67,14 +86,16 @@ function SchemaPhase({ control, index, field, visible }: Props) {
                         render={({ field }) => (
                             <RadioGroup row {...field}>
                                 <FormControlLabel
+                                    disabled={disabled}
                                     value={'0'}
                                     control={<Radio />}
-                                    label="Faza pucharowa"
+                                    label={t('Faza pucharowa')}
                                 />
                                 <FormControlLabel
+                                    disabled={disabled}
                                     value={'1'}
                                     control={<Radio />}
-                                    label="Faza grupowa"
+                                    label={t('Faza grupowa')}
                                 />
                             </RadioGroup>
                         )}
@@ -83,13 +104,18 @@ function SchemaPhase({ control, index, field, visible }: Props) {
             </Grid>
             <Grid item xs={6} md={2}>
                 <FormControl className="w-full">
-                    <FormLabel>{t('Rodzaj wygranej')}</FormLabel>
+                    <InputLabel>{t('Rodzaj wygranej')}</InputLabel>
                     <Controller
                         defaultValue={field.typeOfWin}
                         name={`phases.${index}.typeOfWin`}
                         control={control}
                         render={({ field }) => (
-                            <Select {...field} size="small">
+                            <Select
+                                {...field}
+                                size="small"
+                                label={t('Rodzaj wygranej')}
+                                disabled={disabled}
+                            >
                                 <MenuItem value={1}>{t('Jeden mecz')}</MenuItem>
                                 <MenuItem value={2}>{t('Dwumecz')}</MenuItem>
                                 {!isGroupStage && <MenuItem value={3}>{t('Best 3')}</MenuItem>}
@@ -100,30 +126,32 @@ function SchemaPhase({ control, index, field, visible }: Props) {
                 </FormControl>
             </Grid>
             {!isGroupStage && (
-                <Grid item xs={6} md={1}>
+                <Grid item xs={6} md={2} lg={1}>
                     <Controller
-                        defaultValue={field.pairCount}
-                        rules={{ required: t('To pole jest wymagane') }}
+                        defaultValue={field.pairCount || ''}
+                        rules={{
+                            required: t('To pole jest wymagane'),
+                            min: { value: 1, message: t('Więcej od 0') },
+                        }}
                         name={`phases.${index}.pairCount`}
                         control={control}
                         render={({ field, fieldState: { error } }) => (
-                            <FormControl className="w-full" error={!!error}>
-                                <FormLabel>{t('Ilość par')}</FormLabel>
-                                <TextField
-                                    {...field}
-                                    size="small"
-                                    type="number"
-                                    error={!!error}
-                                    helperText={error?.message || ''}
-                                />
-                            </FormControl>
+                            <TextField
+                                disabled={disabled}
+                                label={t('Ilość par')}
+                                {...field}
+                                size="small"
+                                type="number"
+                                error={!!error}
+                                helperText={error?.message || ''}
+                            />
                         )}
                     />
                 </Grid>
             )}
             {isGroupStage && (
                 <>
-                    <Grid item xs={6} md={1}>
+                    <Grid item xs={6} md={2} lg={1}>
                         <Controller
                             defaultValue={field.groupCount}
                             name={`phases.${index}.groupCount`}
@@ -131,15 +159,19 @@ function SchemaPhase({ control, index, field, visible }: Props) {
                             control={control}
                             render={({ field, fieldState: { error } }) => (
                                 <FormControl className="w-full" error={!!error}>
-                                    <FormLabel>{t('Ilość grup')}</FormLabel>
+                                    <InputLabel>{t('Ilość grup')}</InputLabel>
                                     <Select
+                                        disabled={disabled}
+                                        label={t('Ilość grup')}
                                         {...field}
                                         size="small"
                                         className="w-full"
                                         error={!!error}
                                     >
                                         {map(range(1, size(groupSymbol) + 1), (val) => (
-                                            <MenuItem value={val}>{val}</MenuItem>
+                                            <MenuItem value={val} key={val}>
+                                                {val}
+                                            </MenuItem>
                                         ))}
                                     </Select>
                                     {!!error && <FormHelperText>{error?.message}</FormHelperText>}
@@ -178,12 +210,16 @@ function SchemaPhase({ control, index, field, visible }: Props) {
                                                             control={control}
                                                             render={({ field }) => (
                                                                 <Select
+                                                                    disabled={disabled}
                                                                     {...field}
                                                                     size="small"
                                                                     className="w-full"
                                                                 >
                                                                     {map(range(3, 16), (val) => (
-                                                                        <MenuItem value={val}>
+                                                                        <MenuItem
+                                                                            value={val}
+                                                                            key={val}
+                                                                        >
                                                                             {val}
                                                                         </MenuItem>
                                                                     ))}
@@ -192,23 +228,17 @@ function SchemaPhase({ control, index, field, visible }: Props) {
                                                         />
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <Controller
-                                                            defaultValue={field.promotion}
-                                                            name={`phases.${index}.groups.${i}.promotion`}
+                                                        <PromotionBlock
+                                                            onClear={(playerCount) =>
+                                                                update(i, {
+                                                                    playerCount,
+                                                                })
+                                                            }
+                                                            disabled={disabled}
+                                                            groupIndex={i}
+                                                            phaseIndex={index}
                                                             control={control}
-                                                            render={({ field }) => (
-                                                                <Select
-                                                                    {...field}
-                                                                    size="small"
-                                                                    className="w-full"
-                                                                >
-                                                                    {map(range(3, 16), (val) => (
-                                                                        <MenuItem value={val}>
-                                                                            {val}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            )}
+                                                            defaultValue={field.promotion}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
@@ -224,4 +254,4 @@ function SchemaPhase({ control, index, field, visible }: Props) {
         </Grid>
     );
 }
-export default SchemaPhase;
+export default React.memo(SchemaPhase);
