@@ -1,15 +1,17 @@
 {
   "files": {
-    "main.css": "/fifa-cup/static/css/main.4c44e8aa.css",
-    "main.js": "/fifa-cup/static/js/main.b339264d.js",
+    "main.css": "/fifa-cup/static/css/main.0770fb1d.css",
+    "main.js": "/fifa-cup/static/js/main.f84341d3.js",
+    "static/js/145.7be485f2.chunk.js": "/fifa-cup/static/js/145.7be485f2.chunk.js",
     "static/js/787.85eaca4d.chunk.js": "/fifa-cup/static/js/787.85eaca4d.chunk.js",
     "index.html": "/fifa-cup/index.html",
-    "main.4c44e8aa.css.map": "/fifa-cup/static/css/main.4c44e8aa.css.map",
-    "main.b339264d.js.map": "/fifa-cup/static/js/main.b339264d.js.map",
+    "main.0770fb1d.css.map": "/fifa-cup/static/css/main.0770fb1d.css.map",
+    "main.f84341d3.js.map": "/fifa-cup/static/js/main.f84341d3.js.map",
+    "145.7be485f2.chunk.js.map": "/fifa-cup/static/js/145.7be485f2.chunk.js.map",
     "787.85eaca4d.chunk.js.map": "/fifa-cup/static/js/787.85eaca4d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4c44e8aa.css",
-    "static/js/main.b339264d.js"
+    "static/css/main.0770fb1d.css",
+    "static/js/main.f84341d3.js"
   ]
 }

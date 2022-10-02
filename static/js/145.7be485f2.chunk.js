@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkfifa_cup=self.webpackChunkfifa_cup||[]).push([[145],{3145:function(a,e,n){n.r(e);var c=n(2080),u=n(7689),f=n(184);e.default=function(){var a=(0,u.UO)().id,e=(0,c.Dq)(a,{enabled:!!a}),n=e.data;return e.isLoading,console.log(n,"data"),(0,f.jsx)(f.Fragment,{children:"abc"})}}}]);
+//# sourceMappingURL=145.7be485f2.chunk.js.map
