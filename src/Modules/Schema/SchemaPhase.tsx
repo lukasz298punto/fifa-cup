@@ -21,18 +21,18 @@ import {
 import clsx from 'clsx';
 import { groupSymbol } from 'constants/global';
 import { isEmpty, map, range, size } from 'lodash';
-import { SchemaFormInput } from 'pages/SchemaDetail';
 import React, { useEffect } from 'react';
 import { Control, Controller, FieldArrayWithId, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Schema } from 'types/global';
 import PromotionBlock from './PromotionBlock';
 
 type Props = {
-    control: Control<SchemaFormInput, any>;
+    control: Control<Schema, any>;
     index: number;
     visible: boolean;
     disabled: boolean;
-    field: FieldArrayWithId<SchemaFormInput, 'phases', 'formId'>;
+    field: FieldArrayWithId<Schema, 'phases', 'formId'>;
 };
 
 function SchemaPhase({ control, index, field, visible, disabled }: Props) {
@@ -54,7 +54,7 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
     }, [groupCount, replace]);
 
     return (
-        <Grid container spacing={2} className={clsx(!visible && 'hidden', 'mt-4')}>
+        <Grid container spacing={2} className={clsx(!visible && 'hidden')}>
             <Grid item xs={12}>
                 <FormControl>
                     <FormLabel>{t('Nazwa fazy')}</FormLabel>
@@ -186,13 +186,11 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
                                     <Table size="small" className="w-full">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell align="left">
-                                                    {t('Nazwa grupy')}
-                                                </TableCell>
+                                                <TableCell align="left">{t('Nazwa')}</TableCell>
                                                 <TableCell align="center" width={110}>
                                                     {t('Ilość drużyn')}
                                                 </TableCell>
-                                                <TableCell align="center" width={100}>
+                                                <TableCell align="center" width={90}>
                                                     {t('Awans')}
                                                 </TableCell>
                                             </TableRow>

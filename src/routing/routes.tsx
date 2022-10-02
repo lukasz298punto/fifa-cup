@@ -2,22 +2,27 @@ import React from 'react';
 import { RouteList } from './types';
 
 const Home = React.lazy(() => import('pages/Home'));
-const Players = React.lazy(() => import('pages/Players'));
+const PlayerList = React.lazy(() => import('pages/PlayerList'));
 const SchemaList = React.lazy(() => import('pages/SchemaList'));
 const SchemaDetail = React.lazy(() => import('pages/SchemaDetail'));
+const PlayerDetail = React.lazy(() => import('pages/PlayerDetail'));
 
 export const routes: RouteList = {
     HOME: {
         path: '/',
         component: Home,
     },
-    PLAYERS: {
+    PLAYER_LIST: {
         path: '/players',
-        component: Players,
+        component: PlayerList,
+    },
+    PLAYER_DETAIL: {
+        path: '/players/:id',
+        component: PlayerDetail,
     },
     TOURNAMENT: {
         path: '/tournament',
-        component: Players,
+        component: PlayerList,
     },
     SCHEMA_LIST: {
         path: '/schemas',

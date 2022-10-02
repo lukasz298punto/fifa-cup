@@ -21,11 +21,10 @@ import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import { Loading } from 'components/Loading';
 import { Title } from 'components/Title';
-import { useSchemaMutation, useSchemaQuery } from 'hooks';
+import { useStoreSchemaMutation, useSchemaQuery } from 'hooks';
 import { schemaListQueryKey } from 'hooks/useSchemaListQuery';
 import { get, map, size } from 'lodash';
 import SchemaPhase from 'Modules/Schema/SchemaPhase';
-import { SchemaFormInput } from 'pages/SchemaDetail';
 import React, { useEffect, useState } from 'react';
 import {
     Control,
@@ -40,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { QueryClient, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { routes } from 'routing/routes';
-import { Fn, GroupStageType } from 'types/global';
+import { Fn, GroupStageType, Schema } from 'types/global';
 
 function FormButton({
     mobileIcon: MobileIcon,
@@ -59,13 +58,13 @@ function FormButton({
 }
 
 type Props = {
-    control: Control<SchemaFormInput, any>;
+    control: Control<Schema, any>;
     onSubmit: Fn;
     submitLoading: boolean;
     isNew: boolean;
 };
 
-function StepName({ control, index }: { control: Control<SchemaFormInput, any>; index: number }) {
+function StepName({ control, index }: { control: Control<Schema, any>; index: number }) {
     const name = useWatch({
         control,
         name: `phases.${index}.name`,
@@ -105,65 +104,78 @@ function SchemaDetail({ control, onSubmit, submitLoading, isNew }: Props) {
 
     const handleRemoveStep = (index: number) => () => {
         remove(index);
+        setActiveStep(0);
     };
 
     const disabled = !isNew;
 
     return (
         <>
-            <Grid container className="flex mb-2">
-                <Grid item>
-                    <Title className="mr-2">
-                        {isNew
-                            ? t('Tworzenie nowego schematu dla Turnieju')
-                            : t('Schemat Turnieju')}
-                    </Title>
+            <Paper
+                sx={{
+                    p: 2,
+                }}
+            >
+                <Grid container className="flex mb-2 items-center">
+                    <Grid item>
+                        <Title className="mr-2">
+                            {isNew
+                                ? t('Tworzenie nowego schematu dla Turnieju')
+                                : t('Schemat Turnieju')}
+                        </Title>
+                    </Grid>
+                    <Grid item xs={12} md={3} lg={2}>
+                        <Controller
+                            defaultValue=""
+                            name="name"
+                            control={control}
+                            rules={{ required: t('To pole jest wymagane') }}
+                            render={({ field, fieldState: { error } }) => (
+                                <TextField
+                                    disabled={disabled}
+                                    {...field}
+                                    label={t('Nazwa schematu')}
+                                    error={!!error}
+                                    helperText={error?.message || ''}
+                                    className="w-full"
+                                    size="small"
+                                />
+                            )}
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={3} lg={2}>
-                    <Controller
-                        defaultValue=""
-                        name="name"
-                        control={control}
-                        rules={{ required: t('To pole jest wymagane') }}
-                        render={({ field, fieldState: { error } }) => (
-                            <TextField
-                                disabled={disabled}
-                                {...field}
-                                label={t('Nazwa schematu')}
-                                error={!!error}
-                                helperText={error?.message || ''}
-                                className="w-full"
-                                size="small"
-                            />
-                        )}
-                    />
-                </Grid>
-            </Grid>
-            <Box sx={{ width: '100%' }}>
-                <Stepper
-                    nonLinear
-                    activeStep={activeStep}
-                    orientation={matches ? 'vertical' : 'horizontal'}
-                >
-                    {map(fields, (field, index) => (
-                        <Step key={field.formId}>
-                            <StepLabel>
-                                <Box className="flex items-center">
-                                    <StepName control={control} index={index} />
-                                    {size(fields) > 1 && !disabled && (
-                                        <DeleteOutlineIcon
-                                            onClick={handleRemoveStep(index)}
-                                            fontSize="small"
-                                            color="error"
-                                            className="cursor-pointer"
-                                        />
-                                    )}
-                                </Box>
-                            </StepLabel>
-                        </Step>
-                    ))}
-                </Stepper>
-
+                <Box sx={{ width: '100%' }}>
+                    <Stepper
+                        nonLinear
+                        activeStep={activeStep}
+                        orientation={matches ? 'vertical' : 'horizontal'}
+                    >
+                        {map(fields, (field, index) => (
+                            <Step key={field.formId}>
+                                <StepLabel>
+                                    <Box className="flex items-center">
+                                        <StepName control={control} index={index} />
+                                        {size(fields) > 1 && !disabled && (
+                                            <DeleteOutlineIcon
+                                                onClick={handleRemoveStep(index)}
+                                                fontSize="small"
+                                                color="error"
+                                                className="cursor-pointer"
+                                            />
+                                        )}
+                                    </Box>
+                                </StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                </Box>
+            </Paper>
+            <Paper
+                sx={{
+                    p: 2,
+                    mt: 2,
+                }}
+            >
                 {map(fields, (field, index) => (
                     <SchemaPhase
                         disabled={disabled}
@@ -223,7 +235,7 @@ function SchemaDetail({ control, onSubmit, submitLoading, isNew }: Props) {
                         </>
                     )}
                 </Box>
-            </Box>
+            </Paper>
         </>
     );
 }

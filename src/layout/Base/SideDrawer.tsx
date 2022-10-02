@@ -97,7 +97,7 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                     </ListItemButton>
                 </Link>
 
-                <Link to={routes.PLAYERS.path}>
+                <Link to={routes.PLAYER_LIST.path}>
                     <ListItemButton>
                         <ListItemIcon>
                             <PeopleIcon />

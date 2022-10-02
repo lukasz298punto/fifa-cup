@@ -1,13 +1,12 @@
 import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 import { map, range } from 'lodash';
-import { SchemaFormInput } from 'pages/SchemaDetail';
 import React, { useEffect } from 'react';
 import { Control, Controller, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Fn } from 'types/global';
+import { Schema } from 'types/global';
 
 type Props = {
-    control: Control<SchemaFormInput, any>;
+    control: Control<Schema, any>;
     defaultValue: number | undefined;
     groupIndex: number;
     disabled: boolean;

@@ -1,8 +1,7 @@
-import { Grid, Paper } from '@mui/material';
+import { Grid, IconButton, Paper } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
@@ -12,6 +11,8 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
 import { GroupStageType } from 'types/global';
 import { useTranslation } from 'react-i18next';
+import { TableContainer } from 'components/TableContainer';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 function SchemaList() {
     const { data, isLoading } = useSchemaListQuery();
@@ -22,46 +23,48 @@ function SchemaList() {
 
     return (
         <Loading loading={isLoading}>
-            <TableContainer
-                component={Paper}
-                sx={{ height: 'calc(100vh - 128px)' }}
-                className="h-[calc(100vh - 128px)]"
-            >
+            <TableContainer>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>{t('Nazwa')}</TableCell>
                             <TableCell align="right">{t('Ilość faz')}</TableCell>
-                            <TableCell align="right">{t('Faza grupowa')}</TableCell>
+                            <TableCell align="center" width={150}>
+                                {t('Faza grupowa')}
+                            </TableCell>
+                            <TableCell width={100} align="center">
+                                {t('Akcje')}
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {map(data?.docs, (docSnapshot) => {
                             const { name, phases } = docSnapshot.data();
 
-                            console.log(docSnapshot.id, 'props');
-
                             return (
-                                <TableRow
-                                    hover
-                                    key={docSnapshot.id}
-                                    className="hover:cursor-pointer"
-                                    onClick={() => {
-                                        navigate(
-                                            generatePath(routes.SCHEMA_DETAIL.path, {
-                                                id: docSnapshot.id,
-                                            })
-                                        );
-                                    }}
-                                >
+                                <TableRow hover key={docSnapshot.id}>
                                     <TableCell component="th" scope="row">
                                         {name}
                                     </TableCell>
                                     <TableCell align="right">{size(phases)}</TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="center">
                                         {find(phases, { isGroupStage: GroupStageType.GroupStage })
                                             ? t('Tak')
                                             : t('Nie')}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => {
+                                                navigate(
+                                                    generatePath(routes.SCHEMA_DETAIL.path, {
+                                                        id: docSnapshot.id,
+                                                    })
+                                                );
+                                            }}
+                                        >
+                                            <VisibilityIcon />
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             );
