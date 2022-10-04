@@ -7,7 +7,7 @@ function PlayerDetail() {
         enabled: !!id,
     });
 
-    console.log(data, 'data');
+    console.log(data?.docs, 'data');
 
     return <>abc</>;
 }

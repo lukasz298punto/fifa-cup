@@ -5,12 +5,14 @@ import React from 'react';
 function Loading({
     children,
     loading,
+    className,
 }: {
     children: ((loading: boolean) => React.ReactNode) | React.ReactNode;
     loading: boolean;
+    className?: string;
 }) {
     return (
-        <Box sx={{ m: 1, position: 'relative', opacity: loading ? 0.6 : 1 }}>
+        <Box sx={{ m: 0, position: 'relative', opacity: loading ? 0.6 : 1 }}>
             {typeof children === 'function' ? children(loading) : children}
             {loading && (
                 <CircularProgress

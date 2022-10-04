@@ -1,6 +1,7 @@
 import { Box, Button, Grid, IconButton, MenuItem, Paper, Select, TextField } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
+import { TableCell } from 'style/components';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
@@ -20,14 +21,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Controller, FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { EditedRow } from 'Modules/Player';
-import { styled } from '@mui/material/styles';
-import { TableCell } from 'style/components';
 
 export type Players = {
     players: Player[];
 };
 
-function PlayerList() {
+function Statistics() {
     const { data, isLoading } = usePlayerListQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -124,4 +123,4 @@ function PlayerList() {
         </Loading>
     );
 }
-export default PlayerList;
+export default Statistics;

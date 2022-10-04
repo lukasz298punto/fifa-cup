@@ -16,7 +16,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import React, { useMemo } from 'react';
-import { generatePath, Link } from 'react-router-dom';
+import { generatePath, matchPath, NavLink, useLocation } from 'react-router-dom';
 import { routes } from 'routing/routes';
 import { Fn } from 'types/global';
 import { drawerWidth } from './Base';
@@ -63,6 +63,7 @@ type Props = {
 
 function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
     const { t } = useTranslation();
+    const pathname = useLocation().pathname;
 
     const primaryList = useMemo(() => {
         return [];
@@ -71,6 +72,30 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
     const adminList = useMemo(() => {
         return [];
     }, []);
+
+    console.log(pathname, 'pathname');
+
+    console.log(
+        matchPath(
+            {
+                path: '/',
+                end: true,
+            },
+            pathname
+        ),
+        'matches'
+    );
+
+    const getActiveColor = (path: string, end: boolean = true) =>
+        matchPath(
+            {
+                path,
+                end,
+            },
+            pathname
+        )
+            ? 'primary'
+            : undefined;
 
     return (
         <Drawer variant="permanent" open={drawerOpen}>
@@ -88,61 +113,77 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
             </Toolbar>
             <Divider />
             <List component="nav">
-                <Link to={routes.HOME.path}>
+                <NavLink end to={routes.HOME.path}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <HomeIcon />
+                            <HomeIcon color={getActiveColor(routes.HOME.path)} />
                         </ListItemIcon>
                         <ListItemText primary={t('Home')} />
                     </ListItemButton>
-                </Link>
+                </NavLink>
 
-                <Link to={routes.PLAYER_LIST.path}>
+                <NavLink to={routes.PLAYER_LIST.path}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <PeopleIcon />
+                            <PeopleIcon color={getActiveColor(routes.PLAYER_LIST.path, false)} />
                         </ListItemIcon>
                         <ListItemText primary={t('List graczy')} />
                     </ListItemButton>
-                </Link>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <EmojiEventsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={t('Lista turniejów')} />
-                </ListItemButton>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <BarChartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={t('Statystyki')} />
-                </ListItemButton>
-                <Divider sx={{ my: 1 }} />
+                </NavLink>
 
-                <Link to={routes.TOURNAMENT.path}>
+                <NavLink to={routes.TOURNAMENT_LIST.path}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <AddCardIcon />
+                            <EmojiEventsIcon color={getActiveColor(routes.TOURNAMENT_LIST.path)} />
+                        </ListItemIcon>
+                        <ListItemText primary={t('Lista turniejów')} />
+                    </ListItemButton>
+                </NavLink>
+
+                <NavLink to={routes.STATISTICS.path}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <BarChartIcon color={getActiveColor(routes.STATISTICS.path)} />
+                        </ListItemIcon>
+                        <ListItemText primary={t('Statystyki')} />
+                    </ListItemButton>
+                </NavLink>
+                <Divider sx={{ my: 1 }} />
+
+                <NavLink to={generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <AddCardIcon
+                                color={getActiveColor(
+                                    generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })
+                                )}
+                            />
                         </ListItemIcon>
                         <ListItemText primary={t('Nowy turniej')} />
                     </ListItemButton>
-                </Link>
-                <Link to={generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })}>
+                </NavLink>
+                <NavLink to={generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <AddToDriveIcon />
+                            <AddToDriveIcon
+                                color={getActiveColor(
+                                    generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })
+                                )}
+                            />
                         </ListItemIcon>
                         <ListItemText primary={t('Nowy schemat')} />
                     </ListItemButton>
-                </Link>
-                <Link to={routes.SCHEMA_LIST.path}>
+                </NavLink>
+                <NavLink to={routes.SCHEMA_LIST.path}>
                     <ListItemButton>
                         <ListItemIcon>
-                            <FormatListBulletedIcon />
+                            <FormatListBulletedIcon
+                                color={getActiveColor(routes.SCHEMA_LIST.path)}
+                            />
                         </ListItemIcon>
                         <ListItemText primary={t('Lista schematów')} />
                     </ListItemButton>
-                </Link>
+                </NavLink>
             </List>
         </Drawer>
     );

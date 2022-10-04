@@ -1,14 +1,14 @@
 import { useFirestoreQuery } from '@react-query-firebase/firestore';
 import { firestore } from 'config/firebase';
 import { collection, CollectionReference } from 'firebase/firestore';
-import { Schema } from 'types/global';
+import { Schema, Tournament } from 'types/global';
 
 export const schemaListQueryKey = 'schemas';
 
-function useSchemaListQuery() {
-    const ref = collection(firestore, 'schemas') as CollectionReference<Schema>;
+function useTournamentListQuery() {
+    const ref = collection(firestore, 'tournaments') as CollectionReference<Tournament>;
     const query = useFirestoreQuery([schemaListQueryKey], ref);
 
     return query;
 }
-export default useSchemaListQuery;
+export default useTournamentListQuery;

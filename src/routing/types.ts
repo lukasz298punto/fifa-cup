@@ -2,9 +2,12 @@ export type RouteList = {
     [Property in
         | 'HOME'
         | 'PLAYER_LIST'
-        | 'TOURNAMENT'
         | 'SCHEMA_LIST'
         | 'PLAYER_DETAIL'
+        | 'TOURNAMENT_LIST'
+        | 'TOURNAMENT_DETAIL'
+        | 'STATISTICS'
+        | 'TOURNAMENT_NEW'
         | 'SCHEMA_DETAIL']: RouteConfig;
 };
 

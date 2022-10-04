@@ -1,3 +1,5 @@
+import { DocumentReference } from 'firebase/firestore';
+
 export type Fn = () => void;
 
 export enum GroupStageType {
@@ -10,6 +12,14 @@ export type Player = {
     lastName: string;
     id?: string;
     active: 1 | 0;
+};
+
+export type Tournament = {
+    endDate: string | null;
+    startDate: string | null;
+    name: string;
+    status: 1 | 0;
+    schema: DocumentReference<Schema>;
 };
 
 export type Schema = {

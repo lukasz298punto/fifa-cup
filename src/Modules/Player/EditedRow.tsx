@@ -1,7 +1,7 @@
 import { Box, Button, Grid, IconButton, MenuItem, Paper, Select, TextField } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import { TableCell } from 'style/components';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
@@ -150,7 +150,7 @@ function EditedRow({
                         </>
                     ) : (
                         <>
-                            <Loading loading={updateIsLoading || storeIsLoading}>
+                            <Loading loading={updateIsLoading || storeIsLoading} className="m-0">
                                 {(loading) => (
                                     <IconButton
                                         color="primary"
