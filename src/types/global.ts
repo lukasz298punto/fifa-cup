@@ -33,3 +33,12 @@ export type Schema = {
         groups?: { promotion?: number; playerCount: number }[];
     }[];
 };
+
+type PlayerResult = { id: string; score: string };
+
+export type Result = { playerA: PlayerResult; playerB: PlayerResult };
+
+export type TournamentSchema = {
+    players: Omit<Player, 'active'>[];
+    results: Result[];
+};
