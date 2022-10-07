@@ -1,41 +1,25 @@
-import { Box, Button, Grid, IconButton, MenuItem, Paper, Select, TextField } from '@mui/material';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import { TableCell } from 'style/components';
-import TableHead from '@mui/material/TableHead';
+import CancelIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Box, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
+import { useStorePlayerMutation, useUpdatePlayerMutation } from 'hooks';
+import { Players } from 'pages/PlayerList';
+import React from 'react';
 import {
-    usePlayerListQuery,
-    useSchemaListQuery,
-    useStorePlayerMutation,
-    useUpdatePlayerMutation,
-} from 'hooks';
-import { concat, filter, find, includes, map, size } from 'lodash';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { routes } from 'routing/routes';
-import { Fn, GroupStageType, Player } from 'types/global';
-import { useTranslation } from 'react-i18next';
-import { TableContainer } from 'components/TableContainer';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import React, { useEffect, useState } from 'react';
-import {
-    UseFormGetValues,
     Control,
     Controller,
     FieldArrayWithId,
-    useFieldArray,
-    useForm,
+    UseFormGetValues,
     UseFormTrigger,
 } from 'react-hook-form';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Players } from 'pages/PlayerList';
-import { playerListQueryKey } from 'hooks/usePlayerListQuery';
+import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { routes } from 'routing/routes';
+import { TableCell } from 'style/components';
 
 type Props = {
     isEdited: boolean;
@@ -63,6 +47,7 @@ function EditedRow({
     const { mutate: updateMutate, isLoading: updateIsLoading } = useUpdatePlayerMutation(
         field.id || ''
     );
+    const queryClient = useQueryClient();
     const { mutate: storeMutate, isLoading: storeIsLoading } = useStorePlayerMutation();
 
     return (
@@ -76,6 +61,7 @@ function EditedRow({
                     render={({ field: { value, onChange }, fieldState: { error } }) =>
                         isEdited ? (
                             <TextField
+                                className="min-w-[150px]"
                                 onChange={onChange}
                                 value={value}
                                 error={!!error}
@@ -97,6 +83,7 @@ function EditedRow({
                     render={({ field: { value, onChange }, fieldState: { error } }) =>
                         isEdited ? (
                             <TextField
+                                className="min-w-[150px]"
                                 onChange={onChange}
                                 value={value}
                                 error={!!error}
@@ -109,7 +96,7 @@ function EditedRow({
                     }
                 />
             </TableCell>
-            <TableCell>
+            <TableCell align="center">
                 <Controller
                     defaultValue={field.active}
                     name={`players.${index}.active`}
@@ -175,6 +162,7 @@ function EditedRow({
                                                     },
                                                     {
                                                         onSuccess: () => {
+                                                            // queryClient.refetchQueries('players');
                                                             onCancel(field, index);
                                                         },
                                                     }
@@ -188,6 +176,7 @@ function EditedRow({
                                                     },
                                                     {
                                                         onSuccess: () => {
+                                                            // queryClient.refetchQueries('players');
                                                             onCancel(field, index);
                                                         },
                                                     }

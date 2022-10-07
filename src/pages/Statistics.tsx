@@ -1,33 +1,27 @@
-import { Box, Button, Grid, IconButton, MenuItem, Paper, Select, TextField } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Button } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import { TableCell } from 'style/components';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
-import { usePlayerListQuery, useSchemaListQuery } from 'hooks';
-import { concat, filter, find, includes, last, map, size } from 'lodash';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { routes } from 'routing/routes';
-import { GroupStageType, Player } from 'types/global';
-import { useTranslation } from 'react-i18next';
 import { TableContainer } from 'components/TableContainer';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import { useCallback, useEffect, useState } from 'react';
-import { Controller, FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useAllPlayerListQuery } from 'hooks';
+import { concat, filter, includes, last, map } from 'lodash';
 import { EditedRow } from 'Modules/Player';
+import { useCallback, useEffect, useState } from 'react';
+import { FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { TableCell } from 'style/components';
+import { Player } from 'types/global';
 
 export type Players = {
     players: Player[];
 };
 
 function Statistics() {
-    const { data, isLoading } = usePlayerListQuery();
+    const { data, isLoading } = useAllPlayerListQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [editableRows, setEditableRows] = useState<string[]>([]);

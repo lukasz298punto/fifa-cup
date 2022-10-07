@@ -1,21 +1,25 @@
 import { useFirestoreQuery } from '@react-query-firebase/firestore';
 import { firestore } from 'config/firebase';
-import {
-    collection,
-    CollectionReference,
-    query,
-    limit,
-    where,
-    QueryConstraint,
-    Query,
-} from 'firebase/firestore';
+import { collection, CollectionReference, query, Query, where } from 'firebase/firestore';
 import { Player } from 'types/global';
 
 export const playerListQueryKey = 'players';
 
-function usePlayerListQuery(queryConstraints: QueryConstraint[] = []) {
-    const ref = query(collection(firestore, 'players'), ...queryConstraints) as Query<Player>;
+function useAllPlayerListQuery(subscribe = false) {
+    const ref = collection(firestore, 'players') as CollectionReference<Player>;
 
-    return useFirestoreQuery([playerListQueryKey, queryConstraints], ref, { subscribe: true });
+    return useFirestoreQuery([playerListQueryKey, 'all'], ref, { subscribe });
 }
-export default usePlayerListQuery;
+
+export function useActivePlayerListQuery() {
+    const ref = query(collection(firestore, 'players'), where('active', '==', 1)) as Query<Player>;
+
+    return useFirestoreQuery(
+        [playerListQueryKey, 'active'],
+        ref,
+        {},
+        { cacheTime: 0, staleTime: 0 }
+    );
+}
+
+export default useAllPlayerListQuery;

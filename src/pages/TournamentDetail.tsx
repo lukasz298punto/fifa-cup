@@ -1,46 +1,19 @@
-import AddIcon from '@mui/icons-material/Add';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import PersonIcon from '@mui/icons-material/Person';
-import {
-    Alert,
-    Button,
-    ButtonGroup,
-    Divider,
-    Grid,
-    IconButton,
-    Paper,
-    TextField,
-} from '@mui/material';
-import Avatar from '@mui/material/Avatar';
+import { Alert, Button, ButtonGroup, Divider, Grid, Paper, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
-import { blue, green, red } from '@mui/material/colors';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
 import Tab from '@mui/material/Tab';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { ScoreTable } from 'components/ScoreTable';
-import { TableContainer } from 'components/TableContainer';
-import { where } from 'firebase/firestore';
 import { findPlayerNameById } from 'helpers/global';
-import { usePlayerListQuery } from 'hooks';
-import { combinations, compact, filter, find, isEmpty, map, range, size } from 'lodash';
+import { useActivePlayerListQuery } from 'hooks';
+import { combinations, compact, filter, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useUpdateEffect } from 'react-use';
-import { TableCell } from 'style/components';
-import { Player, Tournament, TournamentSchema } from 'types/global';
+import { Player, TournamentSchema } from 'types/global';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -78,7 +51,7 @@ const schema = {
 function TournamentDetail() {
     const [value] = useState('Faza grupowa');
 
-    const { data } = usePlayerListQuery([where('active', '==', 1)]);
+    const { data } = useActivePlayerListQuery();
 
     const [open, setOpen] = useState(false);
     const [modalIndex, setModalIndex] = useState<number | null>(null);
@@ -224,7 +197,7 @@ function TournamentDetail() {
                                 result.playerA.id &&
                                 result.playerB.id && (
                                     <>
-                                        <Grid container className="py-1 " wrap="nowrap">
+                                        <Grid container className="py-1 items-center" wrap="nowrap">
                                             <Grid
                                                 item
                                                 xs={5}

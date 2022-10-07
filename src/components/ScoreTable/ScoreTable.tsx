@@ -1,59 +1,21 @@
-import AddIcon from '@mui/icons-material/Add';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import PersonIcon from '@mui/icons-material/Person';
-import {
-    Alert,
-    Button,
-    ButtonGroup,
-    Divider,
-    Grid,
-    IconButton,
-    Paper,
-    TextField,
-} from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import { blue, green, red } from '@mui/material/colors';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import Tab from '@mui/material/Tab';
+import { IconButton } from '@mui/material';
+import { green, red } from '@mui/material/colors';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
-import { PlayerPicker } from 'components/PlayerPicker';
 import { TableContainer } from 'components/TableContainer';
 import { matchStatus } from 'constants/global';
-import { where } from 'firebase/firestore';
 import { findPlayerNameById, getMatchStatus, getPkt } from 'helpers/global';
-import { usePlayerListQuery } from 'hooks';
-import {
-    combinations,
-    compact,
-    concat,
-    filter,
-    find,
-    flatMap,
-    isEmpty,
-    map,
-    orderBy,
-    range,
-    reduce,
-    size,
-} from 'lodash';
+import { useActivePlayerListQuery } from 'hooks';
+import { concat, filter, isEmpty, map, orderBy, reduce, size } from 'lodash';
 import 'lodash.combinations';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, FieldArrayWithId, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import React, { useCallback, useMemo } from 'react';
+import { FieldArrayWithId } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useUpdateEffect } from 'react-use';
 import { TableCell } from 'style/components';
-import { Player, Result, TournamentSchema } from 'types/global';
+import { Result, TournamentSchema } from 'types/global';
 
 type ScoreResult = {
     formId: string;
@@ -86,9 +48,7 @@ type MatchResult = {
 
 function ScoreTable({ players, promotion, onAddPlayer, results, className }: Props) {
     const { t } = useTranslation();
-    const { data } = usePlayerListQuery([where('active', '==', 1)]);
-
-    const findPlayerById = (id: string) => find(data?.docs, { id: id })?.data();
+    const { data } = useActivePlayerListQuery();
 
     const getAllResultsByPlayerId = useCallback(
         (id: string) =>

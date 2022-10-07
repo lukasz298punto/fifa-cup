@@ -1,33 +1,18 @@
-import AddIcon from '@mui/icons-material/Add';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PersonIcon from '@mui/icons-material/Person';
-import { Button, ButtonGroup, Grid, IconButton, Paper, TextField } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import { blue, green, red } from '@mui/material/colors';
+import { blue } from '@mui/material/colors';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import Tab from '@mui/material/Tab';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
 import { Loading } from 'components/Loading';
-import { TableContainer } from 'components/TableContainer';
-import { where } from 'firebase/firestore';
-import { usePlayerListQuery } from 'hooks';
-import { combinations, includes, map, range, size } from 'lodash';
+import { useActivePlayerListQuery } from 'hooks';
+import { includes, map } from 'lodash';
 import 'lodash.combinations';
-import React, { useEffect, useState } from 'react';
-import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableCell } from 'style/components';
 import { Fn, Player } from 'types/global';
 
 type Props = {
@@ -38,7 +23,7 @@ type Props = {
 };
 
 function PlayerPicker({ onClose, onPick, disabledPlayers, open }: Props) {
-    const { data, isLoading } = usePlayerListQuery([where('active', '==', 1)]);
+    const { data, isLoading } = useActivePlayerListQuery();
     const { t } = useTranslation();
 
     return (
