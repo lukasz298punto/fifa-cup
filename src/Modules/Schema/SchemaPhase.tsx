@@ -24,7 +24,7 @@ import { isEmpty, map, range, size } from 'lodash';
 import React, { useEffect } from 'react';
 import { Control, Controller, FieldArrayWithId, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Schema } from 'types/global';
+import { Schema, TypeOfWin } from 'types/global';
 import PromotionBlock from './PromotionBlock';
 
 type Props = {
@@ -116,10 +116,14 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
                                 label={t('Rodzaj wygranej')}
                                 disabled={disabled}
                             >
-                                <MenuItem value={1}>{t('Jeden mecz')}</MenuItem>
-                                <MenuItem value={2}>{t('Dwumecz')}</MenuItem>
-                                {!isGroupStage && <MenuItem value={3}>{t('Best 3')}</MenuItem>}
-                                {!isGroupStage && <MenuItem value={4}>{t('Best 5')}</MenuItem>}
+                                <MenuItem value={TypeOfWin.OneMatch}>{t('Jeden mecz')}</MenuItem>
+                                <MenuItem value={TypeOfWin.TwoMatch}>{t('Dwumecz')}</MenuItem>
+                                {!isGroupStage && (
+                                    <MenuItem value={TypeOfWin.Best3}>{t('Best 3')}</MenuItem>
+                                )}
+                                {!isGroupStage && (
+                                    <MenuItem value={TypeOfWin.Best5}>{t('Best 5')}</MenuItem>
+                                )}
                             </Select>
                         )}
                     />

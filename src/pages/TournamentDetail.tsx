@@ -30,7 +30,10 @@ import Typography from '@mui/material/Typography';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { ScoreTable } from 'components/ScoreTable';
 import { TableContainer } from 'components/TableContainer';
-import { combinations, compact, filter, isEmpty, map, range, size } from 'lodash';
+import { where } from 'firebase/firestore';
+import { findPlayerNameById } from 'helpers/global';
+import { usePlayerListQuery } from 'hooks';
+import { combinations, compact, filter, find, isEmpty, map, range, size } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
@@ -74,6 +77,8 @@ const schema = {
 
 function TournamentDetail() {
     const [value] = useState('Faza grupowa');
+
+    const { data } = usePlayerListQuery([where('active', '==', 1)]);
 
     const [open, setOpen] = useState(false);
     const [modalIndex, setModalIndex] = useState<number | null>(null);
@@ -191,9 +196,11 @@ function TournamentDetail() {
                 {/* </Box> */}
                 <TabPanel value={value} index={'Faza grupowa'}>
                     <ButtonGroup variant="outlined">
-                        <Button variant="contained">Grupa A</Button>
-                        <Button>Grupa B</Button>
-                        <Button>Grupa C</Button>
+                        <Button variant="contained" size="small">
+                            Grupa A
+                        </Button>
+                        <Button size="small">Grupa B</Button>
+                        <Button size="small">Grupa C</Button>
                     </ButtonGroup>
 
                     <ScoreTable
@@ -204,121 +211,6 @@ function TournamentDetail() {
                         results={resultsValues}
                     />
 
-                    {/* <TableContainer className="my-2">
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left">{t('Zawodnik')}</TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('Pkt')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('M')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('W')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('R')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('P')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('Br+')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('Br-')}
-                                    </TableCell>
-                                    <TableCell width={50} className="text-center">
-                                        {t('+/-')}
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {map(players, (field, index) => (
-                                    <TableRow
-                                        key={field.formId}
-                                        style={{
-                                            backgroundColor:
-                                                schema.promotion > index ? green[100] : red[100],
-                                        }}
-                                    >
-                                        <TableCell component="th" scope="row">
-                                            {field.id ? (
-                                                `${field.firstName} ${field.lastName}`
-                                            ) : (
-                                                <IconButton
-                                                    className="p-0"
-                                                    size="small"
-                                                    color="primary"
-                                                    onClick={handleClickOpen(index)}
-                                                >
-                                                    <AddCircleIcon />
-                                                </IconButton>
-                                            )}
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center font-bold"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            111
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            className="text-center"
-                                        >
-                                            0
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer> */}
                     <Box>
                         {isEmpty(results) && (
                             <Alert severity="info" variant="standard">
@@ -347,7 +239,7 @@ function TournamentDetail() {
                                                         fieldState: { error },
                                                     }) => (
                                                         <span className="text-xs break-all">
-                                                            {value}
+                                                            {findPlayerNameById(value, data?.docs)}
                                                         </span>
                                                     )}
                                                 />
@@ -411,7 +303,7 @@ function TournamentDetail() {
                                                         fieldState: { error },
                                                     }) => (
                                                         <span className="text-xs break-all">
-                                                            {value}
+                                                            {findPlayerNameById(value, data?.docs)}
                                                         </span>
                                                     )}
                                                 />

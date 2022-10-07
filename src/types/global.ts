@@ -42,3 +42,10 @@ export type TournamentSchema = {
     players: Omit<Player, 'active'>[];
     results: Result[];
 };
+
+export enum TypeOfWin {
+    OneMatch = 1,
+    TwoMatch = 2,
+    Best3 = 3,
+    Best5 = 4,
+}

@@ -39,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { QueryClient, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { routes } from 'routing/routes';
-import { Fn, GroupStageType, Schema } from 'types/global';
+import { Fn, GroupStageType, Schema, TypeOfWin } from 'types/global';
 
 function FormButton({
     mobileIcon: MobileIcon,
@@ -96,7 +96,7 @@ function SchemaDetail({ control, onSubmit, submitLoading, isNew }: Props) {
         append({
             name: `Etap ${size(fields) + 1}`,
             isGroupStage: GroupStageType.Cup,
-            typeOfWin: 1,
+            typeOfWin: TypeOfWin.OneMatch,
             groupCount: 1,
         });
         setActiveStep((prev) => prev + 1);
