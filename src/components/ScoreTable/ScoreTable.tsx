@@ -5,6 +5,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { RoundAddButton } from 'components/RoundAddButton';
 import { TableContainer } from 'components/TableContainer';
 import { matchStatus } from 'constants/global';
 import { findPlayerNameById, getMatchStatus, getPkt } from 'helpers/global';
@@ -124,15 +125,7 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
         return orderBy(resultList, ['pkt', 'brDiff', 'brPlus'], ['desc', 'desc', 'desc']);
     }, [results, players, getAllResultsByPlayerId]);
 
-    // formId, id, pkt, m, w, r, p, brPlus, brMinus, plusAndMinus;
-
-    // /NE3iRRYyKdUrqmfBdKRD
-
-    // const ttt = ;
-    // console.log(result, 'result');
-    // console.log(ttt, 'ttt');
-
-    // [{status: 'W', scorePlus: 2, scoreMinus: 1}]
+    console.log(result, 'result');
 
     return (
         <TableContainer className={className}>
@@ -180,14 +173,11 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
                                     {id ? (
                                         findPlayerNameById(id, data?.docs)
                                     ) : (
-                                        <IconButton
-                                            className="p-0"
-                                            size="small"
-                                            color="primary"
-                                            onClick={() => onAddPlayer(index)}
-                                        >
-                                            <AddCircleIcon />
-                                        </IconButton>
+                                        <RoundAddButton
+                                            onAdd={() => {
+                                                onAddPlayer(index);
+                                            }}
+                                        />
                                     )}
                                 </TableCell>
                                 <TableCell

@@ -47,7 +47,6 @@ function EditedRow({
     const { mutate: updateMutate, isLoading: updateIsLoading } = useUpdatePlayerMutation(
         field.id || ''
     );
-    const queryClient = useQueryClient();
     const { mutate: storeMutate, isLoading: storeIsLoading } = useStorePlayerMutation();
 
     return (

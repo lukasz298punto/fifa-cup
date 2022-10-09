@@ -1,0 +1,238 @@
+import { Alert, Button, ButtonGroup, Divider, Grid, Paper, TextField } from '@mui/material';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import { PlayerPicker } from 'components/PlayerPicker';
+import { RoundAddButton } from 'components/RoundAddButton';
+import { ScoreTable } from 'components/ScoreTable';
+import { findPlayerNameById } from 'helpers/global';
+import { useActivePlayerListQuery } from 'hooks';
+import { combinations, compact, filter, forEach, isEmpty, map, range } from 'lodash';
+import 'lodash.combinations';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    Control,
+    Controller,
+    useFieldArray,
+    UseFieldArrayInsert,
+    useForm,
+    useWatch,
+} from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useUpdateEffect } from 'react-use';
+import { Fn, Player, Result, TournamentSchema, TypeOfWin } from 'types/global';
+import { match, P } from 'ts-pattern';
+
+type FormResult = Result & { formId: string };
+
+type Props = {
+    control: Control<TournamentSchema, any>;
+    index: number;
+    result: FormResult;
+    onAdd?: (result: Result) => void;
+    typeOfWin?: TypeOfWin;
+    disabledPlayers?: string[];
+};
+
+function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }: Props) {
+    const { data } = useActivePlayerListQuery();
+    const { t } = useTranslation();
+    const [teamAOpen, setTeamAOpen] = useState(false);
+    const [teamBOpen, setTeamBOpen] = useState(false);
+
+    const handleTeamAClose = useCallback(() => {
+        setTeamAOpen(false);
+    }, []);
+
+    const handleTeamBClose = useCallback(() => {
+        setTeamBOpen(false);
+    }, []);
+
+    const teamA = useWatch({
+        control,
+        name: `results.${index}.playerA`,
+    });
+
+    const teamB = useWatch({
+        control,
+        name: `results.${index}.playerB`,
+    });
+
+    const getCountOfMatches = () =>
+        match(typeOfWin)
+            .with(TypeOfWin.TwoMatch, () => 2)
+            .with(TypeOfWin.Best3, () => 3)
+            .with(TypeOfWin.Best5, () => 5)
+            .otherwise(() => 0);
+
+    const addMatch = (teamAId?: string, teamBId?: string) => {
+        if (teamAId && teamBId && onAdd) {
+            forEach(range(0, getCountOfMatches()), () => {
+                onAdd({
+                    playerA: { id: teamAId, score: '' },
+                    playerB: { id: teamBId, score: '' },
+                });
+            });
+        }
+    };
+
+    const isDraw = onAdd && teamA?.score && teamB?.score && teamA?.score === teamB?.score;
+    const disabled = !teamA?.id || !teamB?.id;
+
+    return (
+        <>
+            <Grid container className="py-1 items-center" wrap="nowrap">
+                <Grid item xs={5} className="flex justify-end items-center">
+                    <Controller
+                        defaultValue={result.playerA.id}
+                        name={`results.${index}.playerA.id`}
+                        control={control}
+                        render={({ field: { value, onChange }, fieldState: { error } }) => (
+                            <span className="text-xs break-all">
+                                {!value ? (
+                                    <>
+                                        <RoundAddButton
+                                            onAdd={() => {
+                                                setTeamAOpen(true);
+                                            }}
+                                        />
+                                        <PlayerPicker
+                                            onClose={handleTeamAClose}
+                                            open={teamAOpen}
+                                            onPick={(player) => {
+                                                onChange(player.id);
+                                                addMatch(player.id, teamB?.id);
+                                            }}
+                                            disabledPlayers={disabledPlayers}
+                                        />
+                                    </>
+                                ) : (
+                                    findPlayerNameById(value, data?.docs)
+                                )}
+                            </span>
+                        )}
+                    />
+                    {isDraw && (
+                        <Controller
+                            defaultValue={result.playerB.score}
+                            name={`results.${index}.playerA.penaltyScore`}
+                            control={control}
+                            render={({ field, fieldState: { error } }) => (
+                                <TextField
+                                    disabled={disabled}
+                                    inputProps={{
+                                        className: 'p-1 text-center text-xs',
+                                    }}
+                                    {...field}
+                                    className="mx-1 w-10"
+                                    size="small"
+                                    type="number"
+                                    variant="filled"
+                                    placeholder={t('kr.')}
+                                />
+                            )}
+                        />
+                    )}
+                </Grid>
+                <Grid item>
+                    <Box className="flex flex-nowrap">
+                        <Controller
+                            defaultValue={result.playerA.score}
+                            name={`results.${index}.playerA.score`}
+                            control={control}
+                            render={({ field, fieldState: { error } }) => (
+                                <TextField
+                                    disabled={disabled}
+                                    inputProps={{
+                                        className: 'p-1 text-center',
+                                    }}
+                                    {...field}
+                                    className="mx-1 w-10"
+                                    size="small"
+                                    type="number"
+                                    variant="outlined"
+                                />
+                            )}
+                        />
+                        :
+                        <>
+                            <Controller
+                                defaultValue={result.playerB.score}
+                                name={`results.${index}.playerB.score`}
+                                control={control}
+                                render={({ field, fieldState: { error } }) => (
+                                    <TextField
+                                        disabled={disabled}
+                                        inputProps={{
+                                            className: 'p-1 text-center',
+                                        }}
+                                        {...field}
+                                        className="mx-1 w-10"
+                                        size="small"
+                                        type="number"
+                                        variant="outlined"
+                                    />
+                                )}
+                            />
+                            {isDraw && (
+                                <Controller
+                                    defaultValue={result.playerB.score}
+                                    name={`results.${index}.playerB.penaltyScore`}
+                                    control={control}
+                                    render={({ field, fieldState: { error } }) => (
+                                        <TextField
+                                            disabled={disabled}
+                                            inputProps={{
+                                                className: 'p-1 text-center text-xs',
+                                            }}
+                                            {...field}
+                                            className="mx-1 w-10"
+                                            size="small"
+                                            type="number"
+                                            variant="filled"
+                                            placeholder={t('kr.')}
+                                        />
+                                    )}
+                                />
+                            )}
+                        </>
+                    </Box>
+                </Grid>
+                <Grid item className="flex justify-start items-center" xs={5}>
+                    <Controller
+                        defaultValue={result.playerB.id}
+                        name={`results.${index}.playerB.id`}
+                        control={control}
+                        render={({ field: { value, onChange }, fieldState: { error } }) => (
+                            <span className="text-xs break-all">
+                                {!value ? (
+                                    <>
+                                        <RoundAddButton
+                                            onAdd={() => {
+                                                setTeamBOpen(true);
+                                            }}
+                                        />
+                                        <PlayerPicker
+                                            onClose={handleTeamBClose}
+                                            open={teamBOpen}
+                                            onPick={(player) => {
+                                                onChange(player.id);
+                                                addMatch(teamA?.id, player.id);
+                                            }}
+                                            disabledPlayers={disabledPlayers}
+                                        />
+                                    </>
+                                ) : (
+                                    findPlayerNameById(value, data?.docs)
+                                )}
+                            </span>
+                        )}
+                    />
+                </Grid>
+            </Grid>
+            <Divider />
+        </>
+    );
+}
+export default React.memo(ScoreRow);

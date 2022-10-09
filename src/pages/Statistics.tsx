@@ -62,6 +62,7 @@ function Statistics() {
     const handleRowOnEdit = useCallback((field: FieldArrayWithId<Players, 'players', 'formId'>) => {
         setEditableRows((prev) => concat(prev, field.formId));
     }, []);
+
     const handleRowOnCancel = useCallback(
         (field: FieldArrayWithId<Players, 'players', 'formId'>, index: number) => {
             if (field.id) {

@@ -4,16 +4,20 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import { PlayerPicker } from 'components/PlayerPicker';
-import { ScoreTable } from 'components/ScoreTable';
+import { RoundAddButton } from 'components/RoundAddButton';
+import { ScoreRow, ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById } from 'helpers/global';
 import { useActivePlayerListQuery } from 'hooks';
-import { combinations, compact, filter, isEmpty, map, range } from 'lodash';
+import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useUpdateEffect } from 'react-use';
-import { Player, TournamentSchema } from 'types/global';
+import { Player, TournamentSchema, TypeOfWin } from 'types/global';
+import SaveIcon from '@mui/icons-material/Save';
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -25,13 +29,7 @@ function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
+        <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} {...other}>
             {value === index && (
                 <Box sx={{ p: 3 }}>
                     <Typography>{children}</Typography>
@@ -46,10 +44,11 @@ const isTwoMatch = false;
 const schema = {
     playerCount: 3,
     promotion: 1,
+    typeOfWin: TypeOfWin.OneMatch,
 };
 
 function TournamentDetail() {
-    const [value] = useState('Faza grupowa');
+    const [tab, setTab] = useState('Faza grupowa');
 
     const { data } = useActivePlayerListQuery();
 
@@ -61,7 +60,7 @@ function TournamentDetail() {
         setOpen(true);
     }, []);
 
-    const { control, handleSubmit, reset, register, setValue } = useForm<TournamentSchema>();
+    const { control, handleSubmit, reset, register, setValue, watch } = useForm<TournamentSchema>();
 
     const {
         fields: players,
@@ -70,7 +69,6 @@ function TournamentDetail() {
         remove,
         swap,
         move,
-        insert,
         update,
     } = useFieldArray({
         control,
@@ -84,6 +82,16 @@ function TournamentDetail() {
         keyName: 'formId',
     });
 
+    const {
+        fields: results2,
+        insert,
+        append: append2,
+    } = useFieldArray({
+        control,
+        name: 'results2',
+        keyName: 'formId',
+    });
+
     useEffect(() => {
         reset({
             players: map(range(0, schema.playerCount), () => ({
@@ -92,16 +100,36 @@ function TournamentDetail() {
                 lastName: '',
             })),
             results: [],
+            results2: [
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+            ],
         });
     }, [reset]);
 
     useUpdateEffect(() => {
         if (isEmpty(filter(players, (field) => !field.id))) {
+            const baseCombinations = map(combinations(players, 2), ([teamA, teamB]) => ({
+                playerA: { id: teamA.id || '', score: '' },
+                playerB: { id: teamB.id || '', score: '' },
+            }));
+
             resultsReplace(
-                map(combinations(players, 2), ([teamA, teamB]) => ({
-                    playerA: { id: teamA.id || '', score: '' },
-                    playerB: { id: teamB.id || '', score: '' },
-                }))
+                schema.typeOfWin === TypeOfWin.TwoMatch
+                    ? concat(
+                          baseCombinations,
+                          map(baseCombinations, ({ playerA, playerB }) => ({
+                              playerA: playerB,
+                              playerB: playerA,
+                          }))
+                      )
+                    : baseCombinations
             );
         }
         console.log(players, 'fields');
@@ -117,10 +145,12 @@ function TournamentDetail() {
     // "my-2"
 
     console.log(resultsValues, 'resultsValues');
+    console.log(players, 'players');
 
     const { t } = useTranslation();
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTab(newValue);
         // setValue(newValue);
     };
 
@@ -146,6 +176,7 @@ function TournamentDetail() {
     }, [players]);
 
     console.log(results, 'results');
+    console.log(results2, 'results2');
 
     return (
         <>
@@ -155,10 +186,9 @@ function TournamentDetail() {
                 onPick={handlePick}
                 disabledPlayers={disabledPlayers}
             />
-
             <Paper>
                 {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}> */}
-                <Tabs value={'Faza grupowa'} onChange={handleChange} variant="scrollable">
+                <Tabs value={tab} onChange={handleChange} variant="scrollable">
                     <Tab label="Faza grupowa" value="Faza grupowa" />
                     <Tab label="1/8" value="1/8" />
                     <Tab label="1/4" value="1/4" />
@@ -167,7 +197,7 @@ function TournamentDetail() {
                     <Tab label="Finał" value="Finał" />
                 </Tabs>
                 {/* </Box> */}
-                <TabPanel value={value} index={'Faza grupowa'}>
+                <TabPanel value={tab} index={'Faza grupowa'}>
                     <ButtonGroup variant="outlined">
                         <Button variant="contained" size="small">
                             Grupa A
@@ -196,113 +226,57 @@ function TournamentDetail() {
                             (result, index) =>
                                 result.playerA.id &&
                                 result.playerB.id && (
-                                    <>
-                                        <Grid container className="py-1 items-center" wrap="nowrap">
-                                            <Grid
-                                                item
-                                                xs={5}
-                                                className="flex justify-end items-center"
-                                            >
-                                                <Controller
-                                                    defaultValue={result.playerA.id}
-                                                    name={`results.${index}.playerA.id`}
-                                                    control={control}
-                                                    render={({
-                                                        field: { value },
-                                                        fieldState: { error },
-                                                    }) => (
-                                                        <span className="text-xs break-all">
-                                                            {findPlayerNameById(value, data?.docs)}
-                                                        </span>
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid item>
-                                                <Box className="flex flex-nowrap">
-                                                    <Controller
-                                                        defaultValue={result.playerA.score}
-                                                        name={`results.${index}.playerA.score`}
-                                                        control={control}
-                                                        render={({
-                                                            field,
-                                                            fieldState: { error },
-                                                        }) => (
-                                                            <TextField
-                                                                inputProps={{
-                                                                    className: 'p-1 text-center',
-                                                                }}
-                                                                {...field}
-                                                                className="mx-1 w-10"
-                                                                size="small"
-                                                                id="outlined-basic"
-                                                                variant="outlined"
-                                                            />
-                                                        )}
-                                                    />
-                                                    :
-                                                    <Controller
-                                                        defaultValue={result.playerB.score}
-                                                        name={`results.${index}.playerB.score`}
-                                                        control={control}
-                                                        render={({
-                                                            field,
-                                                            fieldState: { error },
-                                                        }) => (
-                                                            <TextField
-                                                                inputProps={{
-                                                                    className: 'p-1 text-center',
-                                                                }}
-                                                                {...field}
-                                                                className="mx-1 w-10"
-                                                                size="small"
-                                                                id="outlined-basic"
-                                                                variant="outlined"
-                                                            />
-                                                        )}
-                                                    />
-                                                </Box>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                className="flex justify-start items-center"
-                                                xs={5}
-                                            >
-                                                <Controller
-                                                    defaultValue={result.playerB.id}
-                                                    name={`results.${index}.playerB.id`}
-                                                    control={control}
-                                                    render={({
-                                                        field: { value },
-                                                        fieldState: { error },
-                                                    }) => (
-                                                        <span className="text-xs break-all">
-                                                            {findPlayerNameById(value, data?.docs)}
-                                                        </span>
-                                                    )}
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                        <Divider />
-                                    </>
+                                    <ScoreRow
+                                        key={result.formId}
+                                        control={control}
+                                        index={index}
+                                        result={result}
+                                    />
                                 )
                         )}
                     </Box>
                 </TabPanel>
-                <TabPanel value={value} index={'1/8'}>
-                    Item Two
+                <TabPanel value={tab} index={'1/8'}>
+                    {map(results2, (result, index) => (
+                        <ScoreRow
+                            disabledPlayers={disabledPlayers}
+                            typeOfWin={schema.typeOfWin}
+                            control={control}
+                            index={index}
+                            result={result}
+                            key={result.formId}
+                            onAdd={(result) => {
+                                append2(result);
+                            }}
+                        />
+                    ))}
                 </TabPanel>
-                <TabPanel value={value} index={'1/4'}>
+                <TabPanel value={tab} index={'1/4'}>
                     Item Three
                 </TabPanel>
-                <TabPanel value={value} index={'1/2'}>
+                <TabPanel value={tab} index={'1/2'}>
                     Item Three
                 </TabPanel>
-                <TabPanel value={value} index={'mecz o 3.'}>
+                <TabPanel value={tab} index={'mecz o 3.'}>
                     Item Three
                 </TabPanel>
-                <TabPanel value={value} index={'Finał'}>
+                <TabPanel value={tab} index={'Finał'}>
                     Item Three
                 </TabPanel>
+                <Box className="px-6 pb-4">
+                    <Button
+                        onClick={() => {}}
+                        startIcon={<StopCircleIcon />}
+                        color="primary"
+                        children={t('Zakończ turniej')}
+                    />
+                    <Button
+                        onClick={() => {}}
+                        startIcon={<PlayCircleFilledWhiteIcon />}
+                        color="primary"
+                        children={t('Wystartuj turniej')}
+                    />
+                </Box>
             </Paper>
         </>
     );

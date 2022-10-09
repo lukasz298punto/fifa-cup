@@ -18,8 +18,7 @@ export type Tournament = {
     endDate: string | null;
     startDate: string | null;
     name: string;
-    status: 1 | 0;
-    schema: DocumentReference<Schema>;
+    schemaId: string;
 };
 
 export type Schema = {
@@ -34,13 +33,14 @@ export type Schema = {
     }[];
 };
 
-type PlayerResult = { id: string; score: string };
+type PlayerResult = { id: string; score: string; penaltyScore?: string };
 
 export type Result = { playerA: PlayerResult; playerB: PlayerResult };
 
 export type TournamentSchema = {
     players: Omit<Player, 'active'>[];
     results: Result[];
+    results2: Result[];
 };
 
 export enum TypeOfWin {

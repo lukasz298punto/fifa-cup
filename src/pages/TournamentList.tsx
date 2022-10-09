@@ -15,6 +15,10 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
 import { Player } from 'types/global';
+import CachedIcon from '@mui/icons-material/Cached';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import DoneIcon from '@mui/icons-material/Done';
+import LoopIcon from '@mui/icons-material/Loop';
 
 export type Players = {
     players: Player[];
@@ -38,7 +42,7 @@ function TournamentList() {
                             <TableCell width={200} align="center">
                                 {t('Data zakończenia')}
                             </TableCell>
-                            <TableCell width={100} align="center">
+                            <TableCell width={50} align="center">
                                 {t('Status')}
                             </TableCell>
                             <TableCell width={100} align="center">
@@ -48,7 +52,7 @@ function TournamentList() {
                     </TableHead>
                     <TableBody>
                         {map(data?.docs, (docSnapshot) => {
-                            const { endDate, name, startDate, status } = docSnapshot.data();
+                            const { endDate, name, startDate } = docSnapshot.data();
 
                             console.log(endDate, 'endDate');
 
@@ -62,7 +66,13 @@ function TournamentList() {
                                         {endDate && format(new Date(endDate), dateTimeFormat)}
                                     </TableCell>
                                     <TableCell align="center">
-                                        {status ? t('Zakończony') : t('Trwa')}
+                                        {endDate ? (
+                                            <DoneIcon color="primary" />
+                                        ) : startDate ? (
+                                            <LoopIcon color="primary" />
+                                        ) : (
+                                            <HourglassEmptyIcon color="primary" />
+                                        )}
                                     </TableCell>
                                     <TableCell align="center">
                                         <IconButton

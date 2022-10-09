@@ -19,6 +19,8 @@ export const findPlayerNameById = (
     id: string,
     docs: QueryDocumentSnapshot<Player>[] | undefined
 ) => {
+    if (!id) return;
+
     const player = find(docs, { id: id })?.data();
 
     return player?.firstName + ' ' + player?.lastName;
