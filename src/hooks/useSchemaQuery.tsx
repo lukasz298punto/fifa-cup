@@ -6,9 +6,17 @@ import { Schema } from 'types/global';
 
 export const schemaQueryKey = 'schema';
 
-function useSchemaQuery(id: string, options?: UseQueryOptions<any, any, any>) {
-    const ref = doc(firestore, 'schemas', id) as DocumentReference<Schema>;
-    const query = useFirestoreDocument([schemaQueryKey, id], ref, {}, options);
+function useSchemaQuery(id?: string, options?: UseQueryOptions<any, any, any>) {
+    const ref = (id ? doc(firestore, 'schemas', id) : null) as DocumentReference<Schema>;
+    const query = useFirestoreDocument<Schema>(
+        [schemaQueryKey, id],
+        ref,
+        {},
+        {
+            enabled: !!id,
+            ...options,
+        }
+    );
 
     return query;
 }

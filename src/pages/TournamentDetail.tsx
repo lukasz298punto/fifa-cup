@@ -7,278 +7,137 @@ import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { ScoreRow, ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById } from 'helpers/global';
-import { useActivePlayerListQuery } from 'hooks';
+import { useActivePlayerListQuery, useSchemaQuery } from 'hooks';
 import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import {
+    Controller,
+    SubmitErrorHandler,
+    SubmitHandler,
+    useFieldArray,
+    useForm,
+    useWatch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useUpdateEffect } from 'react-use';
-import { Player, TournamentSchema, TypeOfWin } from 'types/global';
+import { GroupStageType, Player, TournamentSchema, TypeOfWin } from 'types/global';
 import SaveIcon from '@mui/icons-material/Save';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: string;
-    value: string;
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} {...other}>
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
+import { useTournamentQuery } from 'hooks';
+import { useParams } from 'react-router-dom';
+import { Loading } from 'components/Loading';
+import { CupPhase, GroupsPhase } from 'Modules/Tournament';
+import { TabPanel } from 'components/TabPanel';
 
 const isTwoMatch = false;
 
-const schema = {
+const schema123 = {
     playerCount: 3,
     promotion: 1,
     typeOfWin: TypeOfWin.OneMatch,
 };
 
 function TournamentDetail() {
-    const [tab, setTab] = useState('Faza grupowa');
+    const { id } = useParams<{ id: string }>();
+    const [tab, setTab] = useState('0');
 
-    const { data } = useActivePlayerListQuery();
-
-    const [open, setOpen] = useState(false);
-    const [modalIndex, setModalIndex] = useState<number | null>(null);
-
-    const handleClickOpen = useCallback((index: number) => {
-        setModalIndex(index);
-        setOpen(true);
-    }, []);
+    const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
+        id as string
+    );
+    const tournament = tournamentData?.data();
+    const { data: schemaData, isLoading: schemaIsLoading } = useSchemaQuery(tournament?.schemaId);
+    const schema = schemaData?.data();
 
     const { control, handleSubmit, reset, register, setValue, watch } = useForm<TournamentSchema>();
 
-    const {
-        fields: players,
-        append,
-        prepend,
-        remove,
-        swap,
-        move,
-        update,
-    } = useFieldArray({
-        control,
-        name: 'players',
-        keyName: 'formId',
-    });
-
-    const { fields: results, replace: resultsReplace } = useFieldArray({
-        control,
-        name: 'results',
-        keyName: 'formId',
-    });
-
-    const {
-        fields: results2,
-        insert,
-        append: append2,
-    } = useFieldArray({
-        control,
-        name: 'results2',
-        keyName: 'formId',
-    });
-
     useEffect(() => {
-        reset({
-            players: map(range(0, schema.playerCount), () => ({
-                id: '',
-                firstName: '',
-                lastName: '',
-            })),
-            results: [],
-            results2: [
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-            ],
-        });
-    }, [reset]);
-
-    useUpdateEffect(() => {
-        if (isEmpty(filter(players, (field) => !field.id))) {
-            const baseCombinations = map(combinations(players, 2), ([teamA, teamB]) => ({
-                playerA: { id: teamA.id || '', score: '' },
-                playerB: { id: teamB.id || '', score: '' },
-            }));
-
-            resultsReplace(
-                schema.typeOfWin === TypeOfWin.TwoMatch
-                    ? concat(
-                          baseCombinations,
-                          map(baseCombinations, ({ playerA, playerB }) => ({
-                              playerA: playerB,
-                              playerB: playerA,
-                          }))
-                      )
-                    : baseCombinations
-            );
+        if (tournament?.phases) {
+            reset(tournament);
+        } else {
+            reset({
+                ...tournament,
+                phases: [
+                    {
+                        groups: [
+                            {
+                                players: map(range(0, 3), () => ({
+                                    id: '',
+                                    firstName: '',
+                                    lastName: '',
+                                })),
+                                results: [],
+                            },
+                        ],
+                    },
+                    {
+                        results: [
+                            { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
+                        ],
+                    },
+                ],
+            });
         }
-        console.log(players, 'fields');
-    }, [players]);
-
-    console.log('results', 'results');
-
-    const resultsValues = useWatch({
-        control,
-        name: 'results',
-    });
-
-    // "my-2"
-
-    console.log(resultsValues, 'resultsValues');
-    console.log(players, 'players');
+    }, [reset, tournamentData]);
 
     const { t } = useTranslation();
 
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
-        // setValue(newValue);
     };
 
-    const handleClose = useCallback(() => {
-        setModalIndex(null);
-        setOpen(false);
+    const onSubmit = useCallback<SubmitHandler<TournamentSchema>>(async (data) => {
+        console.log(data, 'data');
     }, []);
 
-    const handlePick = useCallback(
-        (player: Player) => {
-            update(modalIndex as number, {
-                id: player.id,
-                firstName: player.firstName,
-                lastName: player.lastName,
-            });
-            handleClose();
-        },
-        [handleClose, modalIndex, update]
-    );
+    const onError = useCallback<SubmitErrorHandler<TournamentSchema>>((data) => {
+        console.log(data);
+    }, []);
 
-    const disabledPlayers = useMemo(() => {
-        return compact(map(players, 'id'));
-    }, [players]);
-
-    console.log(results, 'results');
-    console.log(results2, 'results2');
+    const handleOnSubmit = useCallback(() => {
+        handleSubmit(onSubmit, onError)();
+    }, [handleSubmit, onSubmit, onError]);
 
     return (
-        <>
-            <PlayerPicker
-                onClose={handleClose}
-                open={open}
-                onPick={handlePick}
-                disabledPlayers={disabledPlayers}
-            />
+        <Loading loading={tournamentIsLoading || schemaIsLoading}>
             <Paper>
-                {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}> */}
                 <Tabs value={tab} onChange={handleChange} variant="scrollable">
-                    <Tab label="Faza grupowa" value="Faza grupowa" />
-                    <Tab label="1/8" value="1/8" />
-                    <Tab label="1/4" value="1/4" />
-                    <Tab label="1/2" value="1/2" />
-                    <Tab label="mecz o 3." value="mecz o 3." />
-                    <Tab label="Finał" value="Finał" />
-                </Tabs>
-                {/* </Box> */}
-                <TabPanel value={tab} index={'Faza grupowa'}>
-                    <ButtonGroup variant="outlined">
-                        <Button variant="contained" size="small">
-                            Grupa A
-                        </Button>
-                        <Button size="small">Grupa B</Button>
-                        <Button size="small">Grupa C</Button>
-                    </ButtonGroup>
-
-                    <ScoreTable
-                        className="my-2"
-                        players={players}
-                        onAddPlayer={handleClickOpen}
-                        promotion={1}
-                        results={resultsValues}
-                    />
-
-                    <Box>
-                        {isEmpty(results) && (
-                            <Alert severity="info" variant="standard">
-                                {t('Wprowadź wszystkich graczy aby wygenerować terminarz')}
-                            </Alert>
-                        )}
-                        {/* {map(combinations(fields, 2), ([teamA, teamB], index) => ( */}
-                        {map(
-                            results,
-                            (result, index) =>
-                                result.playerA.id &&
-                                result.playerB.id && (
-                                    <ScoreRow
-                                        key={result.formId}
-                                        control={control}
-                                        index={index}
-                                        result={result}
-                                    />
-                                )
-                        )}
-                    </Box>
-                </TabPanel>
-                <TabPanel value={tab} index={'1/8'}>
-                    {map(results2, (result, index) => (
-                        <ScoreRow
-                            disabledPlayers={disabledPlayers}
-                            typeOfWin={schema.typeOfWin}
-                            control={control}
-                            index={index}
-                            result={result}
-                            key={result.formId}
-                            onAdd={(result) => {
-                                append2(result);
-                            }}
-                        />
+                    {map(schema?.phases, (value, index) => (
+                        <Tab label={value.name} value={String(index)} key={index} />
                     ))}
-                </TabPanel>
-                <TabPanel value={tab} index={'1/4'}>
-                    Item Three
-                </TabPanel>
-                <TabPanel value={tab} index={'1/2'}>
-                    Item Three
-                </TabPanel>
-                <TabPanel value={tab} index={'mecz o 3.'}>
-                    Item Three
-                </TabPanel>
-                <TabPanel value={tab} index={'Finał'}>
-                    Item Three
-                </TabPanel>
+                </Tabs>
+                {schema &&
+                    map(schema?.phases, (value, index) => (
+                        <TabPanel value={tab} index={String(index)} className="p-3" key={index}>
+                            {value.isGroupStage === GroupStageType.Cup ? (
+                                <CupPhase schema={schema} index={index} control={control} />
+                            ) : (
+                                <GroupsPhase schema={schema} index={index} control={control} />
+                            )}
+                        </TabPanel>
+                    ))}
                 <Box className="px-6 pb-4">
-                    <Button
-                        onClick={() => {}}
-                        startIcon={<StopCircleIcon />}
-                        color="primary"
-                        children={t('Zakończ turniej')}
-                    />
-                    <Button
-                        onClick={() => {}}
-                        startIcon={<PlayCircleFilledWhiteIcon />}
-                        color="primary"
-                        children={t('Wystartuj turniej')}
-                    />
+                    {tournament?.startDate && !tournament?.endDate && (
+                        <Button
+                            onClick={() => {}}
+                            startIcon={<StopCircleIcon />}
+                            color="primary"
+                            children={t('Zakończ turniej')}
+                        />
+                    )}
+                    {!tournament?.startDate && !tournament?.endDate && (
+                        <Button
+                            onClick={handleOnSubmit}
+                            startIcon={<PlayCircleFilledWhiteIcon />}
+                            color="primary"
+                            children={t('Wystartuj turniej')}
+                        />
+                    )}
                 </Box>
             </Paper>
-        </>
+        </Loading>
+        // </>
     );
 }
 export default TournamentDetail;

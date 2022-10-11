@@ -19,8 +19,6 @@ function SchemaList() {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    console.log(data?.docs, 'data');
-
     return (
         <Loading loading={isLoading}>
             <TableContainer>

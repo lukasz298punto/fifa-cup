@@ -65,27 +65,6 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
     const { t } = useTranslation();
     const pathname = useLocation().pathname;
 
-    const primaryList = useMemo(() => {
-        return [];
-    }, []);
-
-    const adminList = useMemo(() => {
-        return [];
-    }, []);
-
-    console.log(pathname, 'pathname');
-
-    console.log(
-        matchPath(
-            {
-                path: '/',
-                end: true,
-            },
-            pathname
-        ),
-        'matches'
-    );
-
     const getActiveColor = (path: string, end: boolean = true) =>
         matchPath(
             {

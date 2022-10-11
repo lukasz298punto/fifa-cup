@@ -33,11 +33,7 @@ function PlayerList() {
     });
     const { data, isLoading } = useAllPlayerListQuery(true);
 
-    console.log(fields, 'fields');
-    console.log(data?.docs, 'data?.docs');
-
     useEffect(() => {
-        console.log('reset');
         reset({
             players: map(data?.docs, (docSnapshot) => {
                 const { firstName, lastName, active } = docSnapshot.data();

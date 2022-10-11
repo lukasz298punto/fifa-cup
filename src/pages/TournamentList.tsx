@@ -54,8 +54,6 @@ function TournamentList() {
                         {map(data?.docs, (docSnapshot) => {
                             const { endDate, name, startDate } = docSnapshot.data();
 
-                            console.log(endDate, 'endDate');
-
                             return (
                                 <TableRow hover key={docSnapshot.id}>
                                     <TableCell align="left">{name}</TableCell>

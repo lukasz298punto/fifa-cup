@@ -16,7 +16,7 @@ import React, { useCallback, useMemo } from 'react';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { TableCell } from 'style/components';
-import { Result, TournamentSchema } from 'types/global';
+import { Player, Result, TournamentSchema } from 'types/global';
 
 type ScoreResult = {
     formId: string;
@@ -32,7 +32,7 @@ type ScoreResult = {
 };
 
 type Props = {
-    players: FieldArrayWithId<TournamentSchema, 'players', 'formId'>[];
+    players: (Omit<Player, 'active'> & { formId: string })[];
     results: Result[];
     promotion: number;
     onAddPlayer: (index: number) => void;
@@ -124,8 +124,6 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
 
         return orderBy(resultList, ['pkt', 'brDiff', 'brPlus'], ['desc', 'desc', 'desc']);
     }, [results, players, getAllResultsByPlayerId]);
-
-    console.log(result, 'result');
 
     return (
         <TableContainer className={className}>

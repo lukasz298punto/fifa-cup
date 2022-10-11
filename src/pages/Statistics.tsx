@@ -33,9 +33,6 @@ function Statistics() {
         keyName: 'formId',
     });
 
-    console.log(fields, 'fields');
-    console.log(data?.docs, 'data?.docs');
-
     useEffect(() => {
         reset({
             players: map(data?.docs, (docSnapshot) => {

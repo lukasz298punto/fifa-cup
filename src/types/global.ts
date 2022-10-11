@@ -33,14 +33,23 @@ export type Schema = {
     }[];
 };
 
-type PlayerResult = { id: string; score: string; penaltyScore?: string };
+export type PlayerResult = { id: string; score: string; penaltyScore?: string };
 
 export type Result = { playerA: PlayerResult; playerB: PlayerResult };
 
-export type TournamentSchema = {
-    players: Omit<Player, 'active'>[];
+type CupDetail = {
     results: Result[];
-    results2: Result[];
+};
+
+type GroupDetail = {
+    groups: {
+        results: Result[];
+        players: Omit<Player, 'active'>[];
+    }[];
+};
+
+export type TournamentSchema = Tournament & {
+    phases?: (CupDetail | GroupDetail)[];
 };
 
 export enum TypeOfWin {

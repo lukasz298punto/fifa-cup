@@ -21,21 +21,21 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useUpdateEffect } from 'react-use';
-import { Fn, Player, Result, TournamentSchema, TypeOfWin } from 'types/global';
+import { Fn, Player, PlayerResult, Result, TournamentSchema, TypeOfWin } from 'types/global';
 import { match, P } from 'ts-pattern';
 
 type FormResult = Result & { formId: string };
 
 type Props = {
     control: Control<TournamentSchema, any>;
-    index: number;
     result: FormResult;
     onAdd?: (result: Result) => void;
     typeOfWin?: TypeOfWin;
     disabledPlayers?: string[];
+    formName: any;
 };
 
-function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }: Props) {
+function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName }: Props) {
     const { data } = useActivePlayerListQuery();
     const { t } = useTranslation();
     const [teamAOpen, setTeamAOpen] = useState(false);
@@ -49,15 +49,17 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
         setTeamBOpen(false);
     }, []);
 
+    const getFormName = (name: string): any => `${formName}.${name}`;
+
     const teamA = useWatch({
         control,
-        name: `results.${index}.playerA`,
-    });
+        name: getFormName('playerA'),
+    }) as PlayerResult;
 
     const teamB = useWatch({
         control,
-        name: `results.${index}.playerB`,
-    });
+        name: getFormName('playerB'),
+    }) as PlayerResult;
 
     const getCountOfMatches = () =>
         match(typeOfWin)
@@ -86,7 +88,7 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                 <Grid item xs={5} className="flex justify-end items-center">
                     <Controller
                         defaultValue={result.playerA.id}
-                        name={`results.${index}.playerA.id`}
+                        name={getFormName('playerA.id')}
                         control={control}
                         render={({ field: { value, onChange }, fieldState: { error } }) => (
                             <span className="text-xs break-all">
@@ -115,8 +117,8 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                     />
                     {isDraw && (
                         <Controller
-                            defaultValue={result.playerB.score}
-                            name={`results.${index}.playerA.penaltyScore`}
+                            defaultValue={result.playerB.penaltyScore}
+                            name={getFormName('playerA.penaltyScore')}
                             control={control}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
@@ -139,7 +141,7 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                     <Box className="flex flex-nowrap">
                         <Controller
                             defaultValue={result.playerA.score}
-                            name={`results.${index}.playerA.score`}
+                            name={getFormName('playerA.score')}
                             control={control}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
@@ -159,7 +161,7 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                         <>
                             <Controller
                                 defaultValue={result.playerB.score}
-                                name={`results.${index}.playerB.score`}
+                                name={getFormName('playerB.score')}
                                 control={control}
                                 render={({ field, fieldState: { error } }) => (
                                     <TextField
@@ -177,8 +179,8 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                             />
                             {isDraw && (
                                 <Controller
-                                    defaultValue={result.playerB.score}
-                                    name={`results.${index}.playerB.penaltyScore`}
+                                    defaultValue={result.playerB.penaltyScore}
+                                    name={getFormName('playerB.penaltyScore')}
                                     control={control}
                                     render={({ field, fieldState: { error } }) => (
                                         <TextField
@@ -202,7 +204,7 @@ function ScoreRow({ control, index, result, onAdd, typeOfWin, disabledPlayers }:
                 <Grid item className="flex justify-start items-center" xs={5}>
                     <Controller
                         defaultValue={result.playerB.id}
-                        name={`results.${index}.playerB.id`}
+                        name={getFormName('playerB.id')}
                         control={control}
                         render={({ field: { value, onChange }, fieldState: { error } }) => (
                             <span className="text-xs break-all">

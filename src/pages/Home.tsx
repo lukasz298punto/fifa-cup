@@ -61,8 +61,6 @@ function Home() {
     const ref123 = doc(firestore, 'players', 'NqEQb9V0c9JPxDvKWP3o');
     const product = useFirestoreDocument(['players', 'NqEQb9V0c9JPxDvKWP3o'], ref123);
 
-    console.log(product, 'product');
-
     return (
         <Grid container spacing={3}>
             {/* Chart */}
