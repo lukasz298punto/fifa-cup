@@ -8,7 +8,12 @@ export const tournamentQueryKey = 'tournament';
 
 function useTournamentQuery(id: string) {
     const ref = doc(firestore, 'tournaments', id) as DocumentReference<TournamentSchema>;
-    const query = useFirestoreDocument([tournamentQueryKey, id], ref);
+    const query = useFirestoreDocument(
+        [tournamentQueryKey, id],
+        ref,
+        {},
+        { refetchInterval: 10000 }
+    );
 
     return query;
 }

@@ -20,7 +20,7 @@ import {
     useWatch,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useUpdateEffect } from 'react-use';
+import { useDebounce, useUpdateEffect } from 'react-use';
 import { GroupStageType, Player, TournamentSchema, TypeOfWin } from 'types/global';
 import SaveIcon from '@mui/icons-material/Save';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
@@ -43,12 +43,11 @@ function TournamentDetail() {
     const { id } = useParams<{ id: string }>();
     const [tab, setTab] = useState('0');
     const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
+    const { t } = useTranslation();
 
     const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
         id as string
     );
-
-    console.log(tournamentData, 'tournamentData');
 
     const tournament = useMemo(() => {
         return tournamentData?.data();
@@ -62,8 +61,12 @@ function TournamentDetail() {
 
     const { control, handleSubmit, reset, register, setValue, watch } = useForm<TournamentSchema>();
 
-    console.log(tournamentData, 'tournamentData');
-    console.log(control, 'control');
+    const phases = useWatch({
+        control,
+        name: 'phases',
+    });
+
+    console.log(tournament, 'tournament');
 
     useEffect(() => {
         if (tournament && schema) {
@@ -98,42 +101,50 @@ function TournamentDetail() {
         }
     }, [reset, tournament, schema]);
 
-    const { t } = useTranslation();
-
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
     };
 
-    // const onSubmit = useCallback<SubmitHandler<TournamentSchema>>(, []);
-
-    // const onError = useCallback<SubmitErrorHandler<TournamentSchema>>((data) => {
-    //     console.log(data);
-    // }, []);
-
     const handleOnSubmit = useCallback(
-        (type: UpdateType) => () => {
-            handleSubmit(
-                async (data) => {
-                    mutate({
-                        ...data,
-                        startDate:
-                            type === UpdateType.Start
-                                ? format(new Date(), dateTimeFormat)
-                                : data.startDate,
-                        endDate:
-                            type === UpdateType.End
-                                ? format(new Date(), dateTimeFormat)
-                                : data.endDate,
-                    });
-                    console.log(data, 'data');
-                },
-                (data) => {
-                    console.log(data);
-                }
-            )();
-        },
+        (type: UpdateType = UpdateType.Update) =>
+            () => {
+                handleSubmit(
+                    async (data) => {
+                        mutate({
+                            ...data,
+                            startDate:
+                                type === UpdateType.Start
+                                    ? format(new Date(), dateTimeFormat)
+                                    : data.startDate,
+                            endDate:
+                                type === UpdateType.End
+                                    ? format(new Date(), dateTimeFormat)
+                                    : data.endDate,
+                        });
+                        console.log(data, 'data');
+                    },
+                    (data) => {
+                        console.log(data);
+                    }
+                )();
+            },
         [handleSubmit, mutate]
     );
+
+    useDebounce(
+        () => {
+            if (tournament && schema) {
+                handleOnSubmit()();
+            }
+            console.log('odpalamy');
+        },
+        3000,
+        [phases]
+    );
+
+    // if(tournamentIsLoading || schemaIsLoading) {
+    //     return
+    // }
 
     return (
         <Loading loading={tournamentIsLoading || schemaIsLoading}>
@@ -154,14 +165,14 @@ function TournamentDetail() {
                         </TabPanel>
                     ))}
                 <Box className="px-6 pb-4">
-                    {/* {tournament?.startDate && !tournament?.endDate && ( */}
-                    <Button
-                        onClick={handleOnSubmit(UpdateType.End)}
-                        startIcon={<StopCircleIcon />}
-                        color="primary"
-                        children={t('Zakończ turniej')}
-                    />
-                    {/* )} */}
+                    {tournament?.startDate && !tournament?.endDate && (
+                        <Button
+                            onClick={handleOnSubmit(UpdateType.End)}
+                            startIcon={<StopCircleIcon />}
+                            color="primary"
+                            children={t('Zakończ turniej')}
+                        />
+                    )}
                     {!tournament?.startDate && !tournament?.endDate && (
                         <Button
                             onClick={handleOnSubmit(UpdateType.Start)}
