@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
@@ -71,48 +71,50 @@ function PlayerList() {
         [remove]
     );
 
+    if (isLoading) {
+        return <CircularProgress size={24} />;
+    }
+
     return (
-        <Loading loading={isLoading}>
-            <TableContainer>
-                <Button
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                        append({ firstName: '', lastName: '', active: 1 });
-                    }}
-                >
-                    {t('Dodaj zawodnika')}
-                </Button>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>{t('Imię')}</TableCell>
-                            <TableCell>{t('Nazwisko')}</TableCell>
-                            <TableCell width={50} align="center">
-                                {t('Aktywny')}
-                            </TableCell>
-                            <TableCell width={100} align="center">
-                                {t('Akcje')}
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {map(fields, (field, index) => (
-                            <EditedRow
-                                key={field.formId}
-                                isEdited={includes(editableRows, field.formId)}
-                                control={control}
-                                field={field}
-                                index={index}
-                                trigger={trigger}
-                                getValues={getValues}
-                                onEdit={handleRowOnEdit}
-                                onCancel={handleRowOnCancel}
-                            />
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Loading>
+        <TableContainer>
+            <Button
+                startIcon={<AddIcon />}
+                onClick={() => {
+                    append({ firstName: '', lastName: '', active: 1 });
+                }}
+            >
+                {t('Dodaj zawodnika')}
+            </Button>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>{t('Imię')}</TableCell>
+                        <TableCell>{t('Nazwisko')}</TableCell>
+                        <TableCell width={50} align="center">
+                            {t('Aktywny')}
+                        </TableCell>
+                        <TableCell width={100} align="center">
+                            {t('Akcje')}
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {map(fields, (field, index) => (
+                        <EditedRow
+                            key={field.formId}
+                            isEdited={includes(editableRows, field.formId)}
+                            control={control}
+                            field={field}
+                            index={index}
+                            trigger={trigger}
+                            getValues={getValues}
+                            onEdit={handleRowOnEdit}
+                            onCancel={handleRowOnCancel}
+                        />
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 export default PlayerList;

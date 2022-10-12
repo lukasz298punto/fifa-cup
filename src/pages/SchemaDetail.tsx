@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material';
+import { CircularProgress, Paper } from '@mui/material';
 import { Loading } from 'components/Loading';
 import { useStoreSchemaMutation, useSchemaQuery } from 'hooks';
 import { schemaListQueryKey } from 'hooks/useSchemaListQuery';
@@ -57,15 +57,17 @@ function SchemaDetail() {
         handleSubmit(onSubmit, onError)();
     }, [handleSubmit, onSubmit, onError]);
 
+    if (schemaIsLoading) {
+        return <CircularProgress size={24} />;
+    }
+
     return (
-        <Loading loading={schemaIsLoading}>
-            <SchemaView
-                control={control}
-                onSubmit={handleOnSubmit}
-                submitLoading={isLoading}
-                isNew={isNew}
-            />
-        </Loading>
+        <SchemaView
+            control={control}
+            onSubmit={handleOnSubmit}
+            submitLoading={isLoading}
+            isNew={isNew}
+        />
     );
 }
 export default SchemaDetail;

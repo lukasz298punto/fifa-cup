@@ -1,5 +1,5 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { TableCell } from 'style/components';
@@ -29,70 +29,72 @@ function TournamentList() {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    return (
-        <Loading loading={isLoading}>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>{t('Nazwa')}</TableCell>
-                            <TableCell width={200} align="center">
-                                {t('Data startu')}
-                            </TableCell>
-                            <TableCell width={200} align="center">
-                                {t('Data zakończenia')}
-                            </TableCell>
-                            <TableCell width={50} align="center">
-                                {t('Status')}
-                            </TableCell>
-                            <TableCell width={100} align="center">
-                                {t('Akcje')}
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {map(data?.docs, (docSnapshot) => {
-                            const { endDate, name, startDate } = docSnapshot.data();
+    if (isLoading) {
+        return <CircularProgress size={24} />;
+    }
 
-                            return (
-                                <TableRow hover key={docSnapshot.id}>
-                                    <TableCell align="left">{name}</TableCell>
-                                    <TableCell align="center">
-                                        {startDate && format(new Date(startDate), dateTimeFormat)}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {endDate && format(new Date(endDate), dateTimeFormat)}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {endDate ? (
-                                            <DoneIcon color="primary" />
-                                        ) : startDate ? (
-                                            <LoopIcon color="primary" />
-                                        ) : (
-                                            <HourglassEmptyIcon color="primary" />
-                                        )}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => {
-                                                navigate(
-                                                    generatePath(routes.TOURNAMENT_DETAIL.path, {
-                                                        id: docSnapshot.id,
-                                                    })
-                                                );
-                                            }}
-                                        >
-                                            <VisibilityIcon />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Loading>
+    return (
+        <TableContainer>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>{t('Nazwa')}</TableCell>
+                        <TableCell width={200} align="center">
+                            {t('Data startu')}
+                        </TableCell>
+                        <TableCell width={200} align="center">
+                            {t('Data zakończenia')}
+                        </TableCell>
+                        <TableCell width={50} align="center">
+                            {t('Status')}
+                        </TableCell>
+                        <TableCell width={100} align="center">
+                            {t('Akcje')}
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {map(data?.docs, (docSnapshot) => {
+                        const { endDate, name, startDate } = docSnapshot.data();
+
+                        return (
+                            <TableRow hover key={docSnapshot.id}>
+                                <TableCell align="left">{name}</TableCell>
+                                <TableCell align="center">
+                                    {startDate && format(new Date(startDate), dateTimeFormat)}
+                                </TableCell>
+                                <TableCell align="center">
+                                    {endDate && format(new Date(endDate), dateTimeFormat)}
+                                </TableCell>
+                                <TableCell align="center">
+                                    {endDate ? (
+                                        <DoneIcon color="primary" />
+                                    ) : startDate ? (
+                                        <LoopIcon color="primary" />
+                                    ) : (
+                                        <HourglassEmptyIcon color="primary" />
+                                    )}
+                                </TableCell>
+                                <TableCell align="center">
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                            navigate(
+                                                generatePath(routes.TOURNAMENT_DETAIL.path, {
+                                                    id: docSnapshot.id,
+                                                })
+                                            );
+                                        }}
+                                    >
+                                        <VisibilityIcon />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 export default TournamentList;
