@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { ScoreTable } from 'components/ScoreTable';
-import { findPlayerNameById } from 'helpers/global';
+import { findPlayerNameById, parseInputNumber } from 'helpers/global';
 import { useActivePlayerListQuery } from 'hooks';
 import { combinations, compact, filter, forEach, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
@@ -120,13 +120,16 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                             defaultValue={result.playerB.penaltyScore}
                             name={getFormName('playerA.penaltyScore')}
                             control={control}
-                            render={({ field, fieldState: { error } }) => (
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <TextField
                                     disabled={disabled}
                                     inputProps={{
                                         className: 'p-1 text-center text-xs',
                                     }}
-                                    {...field}
+                                    value={value}
+                                    onChange={(e) => {
+                                        onChange(parseInputNumber(e.target.value));
+                                    }}
                                     className="mx-1 w-10"
                                     size="small"
                                     type="number"
@@ -143,13 +146,16 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                             defaultValue={result.playerA.score}
                             name={getFormName('playerA.score')}
                             control={control}
-                            render={({ field, fieldState: { error } }) => (
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <TextField
                                     disabled={disabled}
                                     inputProps={{
                                         className: 'p-1 text-center',
                                     }}
-                                    {...field}
+                                    value={value}
+                                    onChange={(e) => {
+                                        onChange(parseInputNumber(e.target.value));
+                                    }}
                                     className="mx-1 w-10"
                                     size="small"
                                     type="number"
@@ -163,13 +169,16 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                 defaultValue={result.playerB.score}
                                 name={getFormName('playerB.score')}
                                 control={control}
-                                render={({ field, fieldState: { error } }) => (
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
                                     <TextField
                                         disabled={disabled}
                                         inputProps={{
                                             className: 'p-1 text-center',
                                         }}
-                                        {...field}
+                                        value={value}
+                                        onChange={(e) => {
+                                            onChange(parseInputNumber(e.target.value));
+                                        }}
                                         className="mx-1 w-10"
                                         size="small"
                                         type="number"
@@ -182,13 +191,19 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                     defaultValue={result.playerB.penaltyScore}
                                     name={getFormName('playerB.penaltyScore')}
                                     control={control}
-                                    render={({ field, fieldState: { error } }) => (
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
                                         <TextField
                                             disabled={disabled}
                                             inputProps={{
                                                 className: 'p-1 text-center text-xs',
                                             }}
-                                            {...field}
+                                            value={value}
+                                            onChange={(e) => {
+                                                onChange(parseInputNumber(e.target.value));
+                                            }}
                                             className="mx-1 w-10"
                                             size="small"
                                             type="number"

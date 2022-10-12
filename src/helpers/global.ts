@@ -15,13 +15,19 @@ export const getPkt = (score: number) => {
     return score > 0 ? 3 : 0;
 };
 
+export const parseInputNumber = (value: any) => {
+    const int = parseInt(value) || 0;
+
+    return int < 0 ? '0' : String(int);
+};
+
 export const findPlayerNameById = (
     id: string,
     docs: QueryDocumentSnapshot<Player>[] | undefined
 ) => {
-    if (!id) return;
+    if (!id) return '';
 
     const player = find(docs, { id: id })?.data();
 
-    return player?.firstName + ' ' + player?.lastName;
+    return (player?.firstName || '') + ' ' + (player?.lastName || '');
 };

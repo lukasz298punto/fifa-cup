@@ -71,8 +71,10 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
         [handleClose, modalIndex, update]
     );
 
+    console.log(results, 'results');
+
     useUpdateEffect(() => {
-        if (isEmpty(filter(players, (field) => !field.id))) {
+        if (isEmpty(filter(players, (field) => !field.id)) && isEmpty(results)) {
             const baseCombinations = map(combinations(players, 2), ([teamA, teamB]) => ({
                 playerA: { id: teamA.id || '', score: '' },
                 playerB: { id: teamB.id || '', score: '' },

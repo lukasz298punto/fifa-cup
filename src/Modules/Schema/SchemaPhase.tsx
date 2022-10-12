@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { groupSymbol } from 'constants/global';
+import { parseInputNumber } from 'helpers/global';
 import { isEmpty, map, range, size } from 'lodash';
 import React, { useEffect } from 'react';
 import { Control, Controller, FieldArrayWithId, useFieldArray, useWatch } from 'react-hook-form';
@@ -139,11 +140,14 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
                         }}
                         name={`phases.${index}.pairCount`}
                         control={control}
-                        render={({ field, fieldState: { error } }) => (
+                        render={({ field: { value, onChange }, fieldState: { error } }) => (
                             <TextField
                                 disabled={disabled}
                                 label={t('Ilość par')}
-                                {...field}
+                                value={value}
+                                onChange={(e) => {
+                                    onChange(parseInputNumber(e.target.value));
+                                }}
                                 size="small"
                                 type="number"
                                 error={!!error}

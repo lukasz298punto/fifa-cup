@@ -3,14 +3,14 @@ import { Base } from 'layout/Base';
 import { map } from 'lodash';
 import { NotFound } from 'pages';
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, HashRouter } from 'react-router-dom';
 import { routes } from './routes';
 
 export const routePrefix = '/fifa-cup';
 
 function Router() {
     return (
-        <BrowserRouter basename={routePrefix}>
+        <HashRouter>
             <Routes>
                 <Route element={<Base />}>
                     {map(routes, ({ path, component: Component }) => (
@@ -27,7 +27,7 @@ function Router() {
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 

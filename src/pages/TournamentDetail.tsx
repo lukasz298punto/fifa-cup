@@ -7,7 +7,7 @@ import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { ScoreRow, ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById } from 'helpers/global';
-import { useActivePlayerListQuery, useSchemaQuery } from 'hooks';
+import { useActivePlayerListQuery, useSchemaQuery, useUpdateTournamentMutation } from 'hooks';
 import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -30,56 +30,73 @@ import { useParams } from 'react-router-dom';
 import { Loading } from 'components/Loading';
 import { CupPhase, GroupsPhase } from 'Modules/Tournament';
 import { TabPanel } from 'components/TabPanel';
+import { format } from 'date-fns';
+import { dateTimeFormat } from 'constants/global';
 
-const isTwoMatch = false;
-
-const schema123 = {
-    playerCount: 3,
-    promotion: 1,
-    typeOfWin: TypeOfWin.OneMatch,
-};
+enum UpdateType {
+    End,
+    Update,
+    Start,
+}
 
 function TournamentDetail() {
     const { id } = useParams<{ id: string }>();
     const [tab, setTab] = useState('0');
+    const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
 
     const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
         id as string
     );
-    const tournament = tournamentData?.data();
+
+    console.log(tournamentData, 'tournamentData');
+
+    const tournament = useMemo(() => {
+        return tournamentData?.data();
+    }, [tournamentData]);
+
     const { data: schemaData, isLoading: schemaIsLoading } = useSchemaQuery(tournament?.schemaId);
-    const schema = schemaData?.data();
+
+    const schema = useMemo(() => {
+        return schemaData?.data();
+    }, [schemaData]);
 
     const { control, handleSubmit, reset, register, setValue, watch } = useForm<TournamentSchema>();
 
+    console.log(tournamentData, 'tournamentData');
+    console.log(control, 'control');
+
     useEffect(() => {
-        if (tournament?.phases) {
-            reset(tournament);
-        } else {
-            reset({
-                ...tournament,
-                phases: [
-                    {
-                        groups: [
-                            {
-                                players: map(range(0, 3), () => ({
-                                    id: '',
-                                    firstName: '',
-                                    lastName: '',
+        if (tournament && schema) {
+            if (tournament?.phases) {
+                reset(tournament);
+            } else {
+                reset({
+                    ...tournament,
+                    phases: map(schema?.phases, (phase) => {
+                        if (phase.isGroupStage === GroupStageType.GroupStage) {
+                            return {
+                                groups: map(phase?.groups, (group) => ({
+                                    players: map(range(0, group.playerCount), () => ({
+                                        id: '',
+                                        firstName: '',
+                                        lastName: '',
+                                    })),
+                                    results: [],
                                 })),
-                                results: [],
-                            },
-                        ],
-                    },
-                    {
-                        results: [
-                            { playerA: { id: '', score: '' }, playerB: { id: '', score: '' } },
-                        ],
-                    },
-                ],
-            });
+                            };
+                        } else {
+                            return {
+                                results: map(range(0, Number(phase.pairCount) || 0), () => ({
+                                    playerA: { id: '', score: '' },
+                                    playerB: { id: '', score: '' },
+                                })),
+                            };
+                        }
+                    }),
+                });
+            }
         }
-    }, [reset, tournamentData]);
+    }, [reset, tournament, schema]);
 
     const { t } = useTranslation();
 
@@ -87,17 +104,36 @@ function TournamentDetail() {
         setTab(newValue);
     };
 
-    const onSubmit = useCallback<SubmitHandler<TournamentSchema>>(async (data) => {
-        console.log(data, 'data');
-    }, []);
+    // const onSubmit = useCallback<SubmitHandler<TournamentSchema>>(, []);
 
-    const onError = useCallback<SubmitErrorHandler<TournamentSchema>>((data) => {
-        console.log(data);
-    }, []);
+    // const onError = useCallback<SubmitErrorHandler<TournamentSchema>>((data) => {
+    //     console.log(data);
+    // }, []);
 
-    const handleOnSubmit = useCallback(() => {
-        handleSubmit(onSubmit, onError)();
-    }, [handleSubmit, onSubmit, onError]);
+    const handleOnSubmit = useCallback(
+        (type: UpdateType) => () => {
+            handleSubmit(
+                async (data) => {
+                    mutate({
+                        ...data,
+                        startDate:
+                            type === UpdateType.Start
+                                ? format(new Date(), dateTimeFormat)
+                                : data.startDate,
+                        endDate:
+                            type === UpdateType.End
+                                ? format(new Date(), dateTimeFormat)
+                                : data.endDate,
+                    });
+                    console.log(data, 'data');
+                },
+                (data) => {
+                    console.log(data);
+                }
+            )();
+        },
+        [handleSubmit, mutate]
+    );
 
     return (
         <Loading loading={tournamentIsLoading || schemaIsLoading}>
@@ -118,17 +154,17 @@ function TournamentDetail() {
                         </TabPanel>
                     ))}
                 <Box className="px-6 pb-4">
-                    {tournament?.startDate && !tournament?.endDate && (
-                        <Button
-                            onClick={() => {}}
-                            startIcon={<StopCircleIcon />}
-                            color="primary"
-                            children={t('Zakończ turniej')}
-                        />
-                    )}
+                    {/* {tournament?.startDate && !tournament?.endDate && ( */}
+                    <Button
+                        onClick={handleOnSubmit(UpdateType.End)}
+                        startIcon={<StopCircleIcon />}
+                        color="primary"
+                        children={t('Zakończ turniej')}
+                    />
+                    {/* )} */}
                     {!tournament?.startDate && !tournament?.endDate && (
                         <Button
-                            onClick={handleOnSubmit}
+                            onClick={handleOnSubmit(UpdateType.Start)}
                             startIcon={<PlayCircleFilledWhiteIcon />}
                             color="primary"
                             children={t('Wystartuj turniej')}
