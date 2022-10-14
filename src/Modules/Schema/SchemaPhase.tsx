@@ -25,6 +25,7 @@ import { isEmpty, map, range, size } from 'lodash';
 import React, { useEffect } from 'react';
 import { Control, Controller, FieldArrayWithId, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { Schema, TypeOfWin } from 'types/global';
 import PromotionBlock from './PromotionBlock';
 
@@ -39,6 +40,8 @@ type Props = {
 function SchemaPhase({ control, index, field, visible, disabled }: Props) {
     const { t } = useTranslation();
 
+    const { id } = useParams<{ id: string }>();
+    const isNew = id === '0';
     const groupCount = useWatch({ control, name: `phases.${index}.groupCount` });
     const isGroupStage = !!Number(useWatch({ control, name: `phases.${index}.isGroupStage` }));
 
@@ -48,11 +51,13 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
         keyName: 'formId',
     });
 
+    console.log(fields, 'fields', index);
+
     useEffect(() => {
-        if (groupCount) {
+        if (groupCount && isNew) {
             replace(map(range(0, groupCount), () => ({ playerCount: 3, promotion: 1 })));
         }
-    }, [groupCount, replace]);
+    }, [groupCount, replace, isNew]);
 
     return (
         <Grid container spacing={2} className={clsx(!visible && 'hidden')}>

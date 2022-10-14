@@ -37,11 +37,11 @@ export type PlayerResult = { id: string; score: string; penaltyScore?: string };
 
 export type Result = { playerA: PlayerResult; playerB: PlayerResult };
 
-type CupDetail = {
+export type CupDetail = {
     results: Result[];
 };
 
-type GroupDetail = {
+export type GroupDetail = {
     groups: {
         results: Result[];
         players: Omit<Player, 'active'>[];

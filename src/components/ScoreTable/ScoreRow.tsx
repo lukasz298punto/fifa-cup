@@ -1,4 +1,13 @@
-import { Alert, Button, ButtonGroup, Divider, Grid, Paper, TextField } from '@mui/material';
+import {
+    Alert,
+    Button,
+    ButtonGroup,
+    CircularProgress,
+    Divider,
+    Grid,
+    Paper,
+    TextField,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -36,7 +45,7 @@ type Props = {
 };
 
 function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName }: Props) {
-    const { data } = useActivePlayerListQuery();
+    const { data, isLoading } = useActivePlayerListQuery();
     const { t } = useTranslation();
     const [teamAOpen, setTeamAOpen] = useState(false);
     const [teamBOpen, setTeamBOpen] = useState(false);

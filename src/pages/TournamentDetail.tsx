@@ -62,8 +62,6 @@ function TournamentDetail() {
         return tournamentData?.data();
     }, [tournamentData]);
 
-    console.log(tournament, 'tournamentData');
-
     const { data: schemaData, isLoading: schemaIsLoading } = useSchemaQuery(tournament?.schemaId);
 
     const schema = useMemo(() => {
@@ -76,8 +74,6 @@ function TournamentDetail() {
         control,
         name: 'phases',
     });
-
-    console.log(tournament, 'tournament');
 
     useEffect(() => {
         if (tournament && schema) {
@@ -148,11 +144,11 @@ function TournamentDetail() {
     useDebounce(
         () => {
             if (tournament && schema) {
+                console.log('odpalamy');
                 handleOnSubmit()();
             }
-            console.log('odpalamy');
         },
-        3000,
+        4000,
         [phases]
     );
 

@@ -1,5 +1,5 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { CircularProgress, IconButton } from '@mui/material';
+import { Chip, CircularProgress, IconButton } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { TableCell } from 'style/components';
@@ -14,18 +14,25 @@ import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
-import { Player } from 'types/global';
+import { Player, Tournament, TournamentSchema } from 'types/global';
 import CachedIcon from '@mui/icons-material/Cached';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import DoneIcon from '@mui/icons-material/Done';
 import LoopIcon from '@mui/icons-material/Loop';
+import { firestore } from 'config/firebase';
+import { collection, CollectionReference, orderBy, query } from 'firebase/firestore';
 
 export type Players = {
     players: Player[];
 };
 
 function TournamentList() {
-    const { data, isLoading } = useTournamentListQuery();
+    const { data, isLoading } = useTournamentListQuery(
+        query(
+            collection(firestore, 'tournaments'),
+            orderBy('startDate', 'desc')
+        ) as CollectionReference<TournamentSchema>
+    );
     const { t } = useTranslation();
     const navigate = useNavigate();
 
@@ -45,9 +52,9 @@ function TournamentList() {
                         <TableCell width={200} align="center">
                             {t('Data zakończenia')}
                         </TableCell>
-                        <TableCell width={50} align="center">
+                        {/* <TableCell width={50} align="center">
                             {t('Status')}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell width={100} align="center">
                             {t('Akcje')}
                         </TableCell>
@@ -59,21 +66,22 @@ function TournamentList() {
 
                         return (
                             <TableRow hover key={docSnapshot.id}>
-                                <TableCell align="left">{name}</TableCell>
+                                <TableCell align="left">
+                                    {startDate && !endDate && (
+                                        <Chip
+                                            label="live"
+                                            color="success"
+                                            // variant="outlined"
+                                            size="small"
+                                        />
+                                    )}
+                                    <span className="ml-1">{name}</span>
+                                </TableCell>
                                 <TableCell align="center">
                                     {startDate && format(new Date(startDate), dateTimeFormat)}
                                 </TableCell>
                                 <TableCell align="center">
                                     {endDate && format(new Date(endDate), dateTimeFormat)}
-                                </TableCell>
-                                <TableCell align="center">
-                                    {endDate ? (
-                                        <DoneIcon color="primary" />
-                                    ) : startDate ? (
-                                        <LoopIcon color="primary" />
-                                    ) : (
-                                        <HourglassEmptyIcon color="primary" />
-                                    )}
                                 </TableCell>
                                 <TableCell align="center">
                                     <IconButton

@@ -8,6 +8,8 @@ import TableRow from '@mui/material/TableRow';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { TableContainer } from 'components/TableContainer';
 import { matchStatus } from 'constants/global';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { getAllPlayersResults } from 'helpers/calculate';
 import { findPlayerNameById, getMatchStatus, getPkt } from 'helpers/global';
 import { useActivePlayerListQuery } from 'hooks';
 import { concat, filter, isEmpty, map, orderBy, reduce, size } from 'lodash';
@@ -19,8 +21,8 @@ import { TableCell } from 'style/components';
 import { Player, Result, TournamentSchema } from 'types/global';
 
 type ScoreResult = {
-    formId: string;
     id: string;
+    formId?: string;
     pkt: number;
     m: number;
     w: number;
@@ -37,63 +39,24 @@ type Props = {
     promotion: number;
     onAddPlayer: (index: number) => void;
     className?: string;
+    allActivePlayers: QueryDocumentSnapshot<Player>[] | undefined;
 };
 
-type MatchResult = {
-    status: keyof typeof matchStatus;
-    plus: number;
-    minus: number;
-    diff: number;
-    pkt: number;
-};
-
-function ScoreTable({ players, promotion, onAddPlayer, results, className }: Props) {
+function ScoreTable({
+    players,
+    promotion,
+    onAddPlayer,
+    results,
+    className,
+    allActivePlayers,
+}: Props) {
     const { t } = useTranslation();
-    const { data } = useActivePlayerListQuery();
-
-    const getAllResultsByPlayerId = useCallback(
-        (id: string) =>
-            reduce(
-                results,
-                (acc: MatchResult[], { playerA, playerB }) => {
-                    if (playerA.score && playerB.score) {
-                        if (playerA.id === id) {
-                            return concat(acc, {
-                                status: getMatchStatus(
-                                    parseInt(playerA.score) - parseInt(playerB.score)
-                                ),
-                                plus: parseInt(playerA.score),
-                                minus: parseInt(playerB.score),
-                                diff: parseInt(playerA.score) - parseInt(playerB.score),
-                                pkt: getPkt(parseInt(playerA.score) - parseInt(playerB.score)),
-                            });
-                        }
-
-                        if (playerB.id === id) {
-                            return concat(acc, {
-                                status: getMatchStatus(
-                                    parseInt(playerB.score) - parseInt(playerA.score)
-                                ),
-                                plus: parseInt(playerB.score),
-                                minus: parseInt(playerA.score),
-                                diff: parseInt(playerB.score) - parseInt(playerA.score),
-                                pkt: getPkt(parseInt(playerB.score) - parseInt(playerA.score)),
-                            });
-                        }
-                    }
-
-                    return acc;
-                },
-                []
-            ),
-        [results]
-    );
 
     const result = useMemo<ScoreResult[]>(() => {
         if (isEmpty(results)) {
             return map(players, (player) => ({
-                formId: player.formId,
                 id: player.id || '',
+                formId: player.formId || '',
                 pkt: 0,
                 m: 0,
                 w: 0,
@@ -105,25 +68,10 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
             }));
         }
 
-        const resultList = map(players, (player) => {
-            const playerResult = getAllResultsByPlayerId(player.id as string);
+        return getAllPlayersResults(players, results);
+    }, [results, players]);
 
-            return {
-                formId: player.formId,
-                id: player.id || '',
-                pkt: reduce(playerResult, (acc, { pkt }) => acc + pkt, 0),
-                m: size(playerResult),
-                w: size(filter(playerResult, { status: matchStatus.W })),
-                r: size(filter(playerResult, { status: matchStatus.D })),
-                p: size(filter(playerResult, { status: matchStatus.L })),
-                brPlus: reduce(playerResult, (acc, { plus }) => acc + plus, 0),
-                brMinus: reduce(playerResult, (acc, { minus }) => acc + minus, 0),
-                brDiff: reduce(playerResult, (acc, { diff }) => acc + diff, 0),
-            };
-        });
-
-        return orderBy(resultList, ['pkt', 'brDiff', 'brPlus'], ['desc', 'desc', 'desc']);
-    }, [results, players, getAllResultsByPlayerId]);
+    console.log(result, 'result');
 
     return (
         <TableContainer className={className}>
@@ -160,7 +108,7 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
                 <TableBody>
                     {map(
                         result,
-                        ({ formId, id, pkt, m, w, r, p, brPlus, brMinus, brDiff }, index) => (
+                        ({ id, formId, pkt, m, w, r, p, brPlus, brMinus, brDiff }, index) => (
                             <TableRow
                                 key={formId}
                                 style={{
@@ -169,7 +117,7 @@ function ScoreTable({ players, promotion, onAddPlayer, results, className }: Pro
                             >
                                 <TableCell component="th" scope="row">
                                     {id ? (
-                                        findPlayerNameById(id, data?.docs)
+                                        findPlayerNameById(id, allActivePlayers)
                                     ) : (
                                         <RoundAddButton
                                             onAdd={() => {

@@ -1,8 +1,9 @@
-import { Alert } from '@mui/material';
+import { Alert, CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { ScoreRow, ScoreTable } from 'components/ScoreTable';
-import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
+import { useActivePlayerListQuery } from 'hooks';
+import { combinations, compact, concat, filter, isEmpty, map, range, shuffle } from 'lodash';
 import 'lodash.combinations';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Control, useFieldArray, useWatch } from 'react-hook-form';
@@ -21,6 +22,7 @@ type Props = {
 
 function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }: Props) {
     const { t } = useTranslation();
+    const { data, isLoading } = useActivePlayerListQuery();
 
     const {
         fields: players,
@@ -75,10 +77,12 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
 
     useUpdateEffect(() => {
         if (isEmpty(filter(players, (field) => !field.id)) && isEmpty(results)) {
-            const baseCombinations = map(combinations(players, 2), ([teamA, teamB]) => ({
-                playerA: { id: teamA.id || '', score: '' },
-                playerB: { id: teamB.id || '', score: '' },
-            }));
+            const baseCombinations = shuffle(
+                map(combinations(players, 2), ([teamA, teamB]) => ({
+                    playerA: { id: teamA.id || '', score: '' },
+                    playerB: { id: teamB.id || '', score: '' },
+                }))
+            );
 
             resultsReplace(
                 typeOfWin === TypeOfWin.TwoMatch
@@ -94,15 +98,9 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
         }
     }, [players]);
 
-    // useEffect(() => {
-    //     replace(
-    //         map(range(0, playerCount), () => ({
-    //             id: '',
-    //             firstName: '',
-    //             lastName: '',
-    //         }))
-    //     );
-    // }, [playerCount, replace]);
+    if (isLoading) {
+        return <CircularProgress size={24} className="mt-2" />;
+    }
 
     return (
         <>
@@ -113,6 +111,7 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
                 disabledPlayers={disabledPlayers}
             />
             <ScoreTable
+                allActivePlayers={data?.docs}
                 className="my-2"
                 players={players}
                 onAddPlayer={handleClickOpen}

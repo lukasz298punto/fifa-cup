@@ -21,6 +21,9 @@ function SchemaDetail() {
     const { mutate, isLoading } = useStoreSchemaMutation();
     const { control, handleSubmit, reset } = useForm<Schema>();
 
+    console.log(schemaData?.data(), 'schemaData');
+    console.log(control, 'control');
+
     useEffect(() => {
         reset(
             isNew
@@ -41,6 +44,7 @@ function SchemaDetail() {
 
     const onSubmit = useCallback<SubmitHandler<Schema>>(
         async (data) => {
+            console.log(data, 'data');
             await mutate(data);
 
             queryClient.invalidateQueries(schemaListQueryKey);
