@@ -17,9 +17,10 @@ export const playerQueryKey = 'player';
 function usePlayerQuery(id: string) {
     const ref = doc(firestore, 'players', id) as DocumentReference<Player>;
 
-    const ref123 = query(collection(firestore, 'wins'), where('player', '==', ref));
-
-    return useFirestoreQuery([playerQueryKey], ref123);
+    return useFirestoreQuery(
+        [playerQueryKey],
+        query(collection(firestore, 'wins'), where('player', '==', ref))
+    );
 }
 
 export default usePlayerQuery;

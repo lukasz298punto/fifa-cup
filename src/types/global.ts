@@ -14,6 +14,10 @@ export type Player = {
     active: 1 | 0;
 };
 
+export type Config = {
+    nextTournamentDate: string | null;
+};
+
 export type Tournament = {
     endDate: string | null;
     startDate: string | null;

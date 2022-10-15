@@ -19,7 +19,6 @@ import { Tournament } from 'types/global';
 
 function LastTournament() {
     const { t } = useTranslation();
-
     const { data, isLoading } = useActivePlayerListQuery();
 
     const { data: tournamentData, isLoading: tournamentDataIsLoading } = useTournamentListQuery(
