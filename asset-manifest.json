@@ -1,29 +1,27 @@
 {
   "files": {
-    "main.css": "/fifa-cup/static/css/main.bf877866.css",
-    "main.js": "/fifa-cup/static/js/main.2a9e288e.js",
-    "static/js/145.cc3a1853.chunk.js": "/fifa-cup/static/js/145.cc3a1853.chunk.js",
-    "static/js/166.09466b0f.chunk.js": "/fifa-cup/static/js/166.09466b0f.chunk.js",
-    "static/js/105.703e0ccd.chunk.js": "/fifa-cup/static/js/105.703e0ccd.chunk.js",
-    "static/js/415.00d11bc1.chunk.js": "/fifa-cup/static/js/415.00d11bc1.chunk.js",
-    "static/js/208.9687fc3e.chunk.js": "/fifa-cup/static/js/208.9687fc3e.chunk.js",
+    "main.css": "/fifa-cup/static/css/main.d82b2f92.css",
+    "main.js": "/fifa-cup/static/js/main.8b0102a5.js",
+    "static/js/145.59700f22.chunk.js": "/fifa-cup/static/js/145.59700f22.chunk.js",
+    "static/js/166.a38ab377.chunk.js": "/fifa-cup/static/js/166.a38ab377.chunk.js",
+    "static/js/105.e7581b23.chunk.js": "/fifa-cup/static/js/105.e7581b23.chunk.js",
+    "static/js/415.10d26d45.chunk.js": "/fifa-cup/static/js/415.10d26d45.chunk.js",
+    "static/js/208.f464d22e.chunk.js": "/fifa-cup/static/js/208.f464d22e.chunk.js",
     "static/js/787.85eaca4d.chunk.js": "/fifa-cup/static/js/787.85eaca4d.chunk.js",
-    "static/js/977.857fca0d.chunk.js": "/fifa-cup/static/js/977.857fca0d.chunk.js",
-    "static/js/802.cb60875a.chunk.js": "/fifa-cup/static/js/802.cb60875a.chunk.js",
+    "static/js/630.2d28801d.chunk.js": "/fifa-cup/static/js/630.2d28801d.chunk.js",
     "index.html": "/fifa-cup/index.html",
-    "main.bf877866.css.map": "/fifa-cup/static/css/main.bf877866.css.map",
-    "main.2a9e288e.js.map": "/fifa-cup/static/js/main.2a9e288e.js.map",
-    "145.cc3a1853.chunk.js.map": "/fifa-cup/static/js/145.cc3a1853.chunk.js.map",
-    "166.09466b0f.chunk.js.map": "/fifa-cup/static/js/166.09466b0f.chunk.js.map",
-    "105.703e0ccd.chunk.js.map": "/fifa-cup/static/js/105.703e0ccd.chunk.js.map",
-    "415.00d11bc1.chunk.js.map": "/fifa-cup/static/js/415.00d11bc1.chunk.js.map",
-    "208.9687fc3e.chunk.js.map": "/fifa-cup/static/js/208.9687fc3e.chunk.js.map",
+    "main.d82b2f92.css.map": "/fifa-cup/static/css/main.d82b2f92.css.map",
+    "main.8b0102a5.js.map": "/fifa-cup/static/js/main.8b0102a5.js.map",
+    "145.59700f22.chunk.js.map": "/fifa-cup/static/js/145.59700f22.chunk.js.map",
+    "166.a38ab377.chunk.js.map": "/fifa-cup/static/js/166.a38ab377.chunk.js.map",
+    "105.e7581b23.chunk.js.map": "/fifa-cup/static/js/105.e7581b23.chunk.js.map",
+    "415.10d26d45.chunk.js.map": "/fifa-cup/static/js/415.10d26d45.chunk.js.map",
+    "208.f464d22e.chunk.js.map": "/fifa-cup/static/js/208.f464d22e.chunk.js.map",
     "787.85eaca4d.chunk.js.map": "/fifa-cup/static/js/787.85eaca4d.chunk.js.map",
-    "977.857fca0d.chunk.js.map": "/fifa-cup/static/js/977.857fca0d.chunk.js.map",
-    "802.cb60875a.chunk.js.map": "/fifa-cup/static/js/802.cb60875a.chunk.js.map"
+    "630.2d28801d.chunk.js.map": "/fifa-cup/static/js/630.2d28801d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bf877866.css",
-    "static/js/main.2a9e288e.js"
+    "static/css/main.d82b2f92.css",
+    "static/js/main.8b0102a5.js"
   ]
 }
