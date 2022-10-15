@@ -29,6 +29,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { useIsLogged } from 'hooks';
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -64,6 +65,7 @@ type Props = {
 function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
     const { t } = useTranslation();
     const pathname = useLocation().pathname;
+    const isLogged = useIsLogged();
 
     const getActiveColor = (path: string, end: boolean = true) =>
         matchPath(
@@ -129,40 +131,46 @@ function SideDrawer({ toggleDrawer, drawerOpen }: Props) {
                 </NavLink>
                 <Divider sx={{ my: 1 }} />
 
-                <NavLink to={generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })}>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <AddCardIcon
-                                color={getActiveColor(
-                                    generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })
-                                )}
-                            />
-                        </ListItemIcon>
-                        <ListItemText primary={t('Nowy turniej')} />
-                    </ListItemButton>
-                </NavLink>
-                <NavLink to={generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })}>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <AddToDriveIcon
-                                color={getActiveColor(
-                                    generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })
-                                )}
-                            />
-                        </ListItemIcon>
-                        <ListItemText primary={t('Nowy schemat')} />
-                    </ListItemButton>
-                </NavLink>
-                <NavLink to={routes.SCHEMA_LIST.path}>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <FormatListBulletedIcon
-                                color={getActiveColor(routes.SCHEMA_LIST.path)}
-                            />
-                        </ListItemIcon>
-                        <ListItemText primary={t('Lista schematów')} />
-                    </ListItemButton>
-                </NavLink>
+                {isLogged && (
+                    <NavLink to={generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <AddCardIcon
+                                    color={getActiveColor(
+                                        generatePath(routes.TOURNAMENT_DETAIL.path, { id: 0 })
+                                    )}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary={t('Nowy turniej')} />
+                        </ListItemButton>
+                    </NavLink>
+                )}
+                {isLogged && (
+                    <NavLink to={generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <AddToDriveIcon
+                                    color={getActiveColor(
+                                        generatePath(routes.SCHEMA_DETAIL.path, { id: 0 })
+                                    )}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary={t('Nowy schemat')} />
+                        </ListItemButton>
+                    </NavLink>
+                )}
+                {isLogged && (
+                    <NavLink to={routes.SCHEMA_LIST.path}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <FormatListBulletedIcon
+                                    color={getActiveColor(routes.SCHEMA_LIST.path)}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary={t('Lista schematów')} />
+                        </ListItemButton>
+                    </NavLink>
+                )}
             </List>
         </Drawer>
     );

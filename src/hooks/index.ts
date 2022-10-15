@@ -10,3 +10,4 @@ export { default as useTournamentQuery } from './useTournamentQuery';
 export { default as useUpdateTournamentMutation } from './useUpdateTournamentMutation';
 export { default as useConfigQuery } from './useConfigQuery';
 export { default as useUpdateConfigMutation } from './useUpdateConfigMutation';
+export { default as useIsLogged } from './useIsLogged';

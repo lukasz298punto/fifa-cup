@@ -1,6 +1,17 @@
 import { matchStatus } from 'constants/global';
 import { getMatchStatus, getPkt } from 'helpers/global';
-import { concat, filter, flatten, includes, map, reduce, reverse, size, orderBy } from 'lodash';
+import {
+    concat,
+    filter,
+    flatten,
+    includes,
+    map,
+    reduce,
+    reverse,
+    size,
+    orderBy,
+    isNil,
+} from 'lodash';
 import 'lodash.combinations';
 import { CupDetail, GroupDetail, Player, Result } from 'types/global';
 
@@ -71,6 +82,7 @@ const getSequence = (result: CupDetail | GroupDetail) => {
             result?.results,
             (acc, current) => {
                 if (current.playerA.score > current.playerB.score) {
+                    console.log(current.playerA, 'current.playerA');
                     return {
                         winners: concat(acc.winners, current.playerA.id),
                         losers: concat(acc.winners, current.playerB.id),
@@ -84,6 +96,27 @@ const getSequence = (result: CupDetail | GroupDetail) => {
                     };
                 }
 
+                if (
+                    current.playerA.score === current.playerB.score &&
+                    !isNil(current.playerA.penaltyScore) &&
+                    !isNil(current.playerB.penaltyScore)
+                ) {
+                    return {
+                        winners: concat(
+                            acc.winners,
+                            current.playerA.penaltyScore > current.playerB.penaltyScore
+                                ? current.playerA.id
+                                : current.playerB.id
+                        ),
+                        losers: concat(
+                            acc.losers,
+                            current.playerA.penaltyScore < current.playerB.penaltyScore
+                                ? current.playerA.id
+                                : current.playerB.id
+                        ),
+                    };
+                }
+
                 return acc;
             },
             {
@@ -91,6 +124,8 @@ const getSequence = (result: CupDetail | GroupDetail) => {
                 losers: [] as string[],
             }
         );
+
+        console.log(results, 'results`1```````````````');
         return [...results.winners, ...results.losers];
     } else {
         const allGroups = reduce(
@@ -110,6 +145,8 @@ const getSequence = (result: CupDetail | GroupDetail) => {
 
 export const getTournamentSequence = (phases: (CupDetail | GroupDetail)[] | undefined) => {
     if (!phases) return [];
+
+    console.log(reverse(phases), 'ddxxx---------');
 
     return reduce(
         flatten(map(reverse(phases), getSequence)),

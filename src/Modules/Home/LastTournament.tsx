@@ -30,11 +30,13 @@ function LastTournament() {
         'last'
     );
 
-    console.log(tournamentData?.docs, 'tournamentData');
+    console.log(tournamentData?.docs, 'tournamentData123');
 
     const calculate = useMemo(() => {
         return getTournamentSequence(tournamentData?.docs?.[0]?.data()?.phases);
     }, [tournamentData?.docs]);
+
+    console.log(calculate, 'calculate123');
 
     if (tournamentDataIsLoading || isLoading) {
         return <CircularProgress size={24} />;

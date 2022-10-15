@@ -14,7 +14,7 @@ import {
 import { Loading } from 'components/Loading';
 import { firestore } from 'config/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
-import { useSchemaListQuery, useStoreTournamentMutation } from 'hooks';
+import { useIsLogged, useSchemaListQuery, useStoreTournamentMutation } from 'hooks';
 import { map, range } from 'lodash';
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,7 @@ function TournamentNew() {
     const { data, isLoading } = useSchemaListQuery();
     const { t } = useTranslation();
     const { mutate: storeMutate, isLoading: storeIsLoading } = useStoreTournamentMutation();
+    const isLogged = useIsLogged();
 
     const onSubmit: SubmitHandler<Tournament> = ({ schemaId, name }) => {
         storeMutate(
@@ -46,6 +47,10 @@ function TournamentNew() {
     };
 
     const onError: SubmitErrorHandler<Tournament> = (data) => console.log(data);
+
+    if (!isLogged) {
+        navigate(generatePath(routes.HOME.path));
+    }
 
     return (
         <Paper className="p-4">

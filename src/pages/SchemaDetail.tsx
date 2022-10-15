@@ -1,18 +1,19 @@
 import { CircularProgress, Paper } from '@mui/material';
 import { Loading } from 'components/Loading';
-import { useStoreSchemaMutation, useSchemaQuery } from 'hooks';
+import { useStoreSchemaMutation, useSchemaQuery, useIsLogged } from 'hooks';
 import { schemaListQueryKey } from 'hooks/useSchemaListQuery';
 import { SchemaDetail as SchemaView } from 'Modules/Schema';
 import { useCallback, useEffect } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { routes } from 'routing/routes';
 import { GroupStageType, Schema } from 'types/global';
 
 function SchemaDetail() {
     const { id } = useParams<{ id: string }>();
     const queryClient = useQueryClient();
+    const isLogged = useIsLogged();
     const isNew = id === '0';
     const { data: schemaData, isLoading: schemaIsLoading } = useSchemaQuery(id as string, {
         enabled: !!id && !isNew,
@@ -20,9 +21,6 @@ function SchemaDetail() {
     const navigate = useNavigate();
     const { mutate, isLoading } = useStoreSchemaMutation();
     const { control, handleSubmit, reset } = useForm<Schema>();
-
-    console.log(schemaData?.data(), 'schemaData');
-    console.log(control, 'control');
 
     useEffect(() => {
         reset(
@@ -60,6 +58,10 @@ function SchemaDetail() {
     const handleOnSubmit = useCallback(() => {
         handleSubmit(onSubmit, onError)();
     }, [handleSubmit, onSubmit, onError]);
+
+    if (!isLogged && isNew) {
+        navigate(generatePath(routes.HOME.path));
+    }
 
     if (schemaIsLoading) {
         return <CircularProgress size={24} />;

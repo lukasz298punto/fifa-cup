@@ -16,7 +16,7 @@ import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById, parseInputNumber } from 'helpers/global';
-import { useActivePlayerListQuery } from 'hooks';
+import { useActivePlayerListQuery, useIsLogged } from 'hooks';
 import { combinations, compact, filter, forEach, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -49,6 +49,7 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
     const { t } = useTranslation();
     const [teamAOpen, setTeamAOpen] = useState(false);
     const [teamBOpen, setTeamBOpen] = useState(false);
+    const isLogged = useIsLogged();
 
     const handleTeamAClose = useCallback(() => {
         setTeamAOpen(false);
@@ -72,9 +73,9 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
 
     const getCountOfMatches = () =>
         match(typeOfWin)
-            .with(TypeOfWin.TwoMatch, () => 2)
-            .with(TypeOfWin.Best3, () => 3)
-            .with(TypeOfWin.Best5, () => 5)
+            .with(TypeOfWin.TwoMatch, () => 1)
+            .with(TypeOfWin.Best3, () => 2)
+            .with(TypeOfWin.Best5, () => 4)
             .otherwise(() => 0);
 
     const addMatch = (teamAId?: string, teamBId?: string) => {
@@ -129,23 +130,27 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                             defaultValue={result.playerB.penaltyScore}
                             name={getFormName('playerA.penaltyScore')}
                             control={control}
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    disabled={disabled}
-                                    inputProps={{
-                                        className: 'p-1 text-center text-xs',
-                                    }}
-                                    value={value}
-                                    onChange={(e) => {
-                                        onChange(parseInputNumber(e.target.value));
-                                    }}
-                                    className="mx-1 w-10"
-                                    size="small"
-                                    type="number"
-                                    variant="filled"
-                                    placeholder={t('kr.')}
-                                />
-                            )}
+                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                isLogged ? (
+                                    <TextField
+                                        disabled={disabled}
+                                        inputProps={{
+                                            className: 'p-1 text-center text-xs',
+                                        }}
+                                        value={value}
+                                        onChange={(e) => {
+                                            onChange(parseInputNumber(e.target.value));
+                                        }}
+                                        className="mx-1 w-10"
+                                        size="small"
+                                        type="number"
+                                        variant="filled"
+                                        placeholder={t('kr.')}
+                                    />
+                                ) : (
+                                    <span className="text-xs ml-1 mb-[7px] -mr-[3px]">{value}</span>
+                                )
+                            }
                         />
                     )}
                 </Grid>
@@ -155,30 +160,8 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                             defaultValue={result.playerA.score}
                             name={getFormName('playerA.score')}
                             control={control}
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    disabled={disabled}
-                                    inputProps={{
-                                        className: 'p-1 text-center',
-                                    }}
-                                    value={value}
-                                    onChange={(e) => {
-                                        onChange(parseInputNumber(e.target.value));
-                                    }}
-                                    className="mx-1 w-10"
-                                    size="small"
-                                    type="number"
-                                    variant="outlined"
-                                />
-                            )}
-                        />
-                        :
-                        <>
-                            <Controller
-                                defaultValue={result.playerB.score}
-                                name={getFormName('playerB.score')}
-                                control={control}
-                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                isLogged ? (
                                     <TextField
                                         disabled={disabled}
                                         inputProps={{
@@ -193,7 +176,37 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                         type="number"
                                         variant="outlined"
                                     />
-                                )}
+                                ) : (
+                                    <span className="mx-1 font-bold">{value}</span>
+                                )
+                            }
+                        />
+                        :
+                        <>
+                            <Controller
+                                defaultValue={result.playerB.score}
+                                name={getFormName('playerB.score')}
+                                control={control}
+                                render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                    isLogged ? (
+                                        <TextField
+                                            disabled={disabled}
+                                            inputProps={{
+                                                className: 'p-1 text-center',
+                                            }}
+                                            value={value}
+                                            onChange={(e) => {
+                                                onChange(parseInputNumber(e.target.value));
+                                            }}
+                                            className="mx-1 w-10"
+                                            size="small"
+                                            type="number"
+                                            variant="outlined"
+                                        />
+                                    ) : (
+                                        <span className="mx-1 font-bold">{value}</span>
+                                    )
+                                }
                             />
                             {isDraw && (
                                 <Controller
@@ -203,23 +216,29 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                     render={({
                                         field: { onChange, value },
                                         fieldState: { error },
-                                    }) => (
-                                        <TextField
-                                            disabled={disabled}
-                                            inputProps={{
-                                                className: 'p-1 text-center text-xs',
-                                            }}
-                                            value={value}
-                                            onChange={(e) => {
-                                                onChange(parseInputNumber(e.target.value));
-                                            }}
-                                            className="mx-1 w-10"
-                                            size="small"
-                                            type="number"
-                                            variant="filled"
-                                            placeholder={t('kr.')}
-                                        />
-                                    )}
+                                    }) =>
+                                        isLogged ? (
+                                            <TextField
+                                                disabled={disabled}
+                                                inputProps={{
+                                                    className: 'p-1 text-center text-xs',
+                                                }}
+                                                value={value}
+                                                onChange={(e) => {
+                                                    onChange(parseInputNumber(e.target.value));
+                                                }}
+                                                className="mx-1 w-10"
+                                                size="small"
+                                                type="number"
+                                                variant="filled"
+                                                placeholder={t('kr.')}
+                                            />
+                                        ) : (
+                                            <span className="text-xs mr-1 mb-[7px] -ml-[3px]">
+                                                {value}
+                                            </span>
+                                        )
+                                    }
                                 />
                             )}
                         </>

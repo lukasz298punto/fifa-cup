@@ -15,6 +15,7 @@ import { findPlayerNameById } from 'helpers/global';
 import {
     useActivePlayerListQuery,
     useConfigQuery,
+    useIsLogged,
     useStoreSchemaMutation,
     useUpdateConfigMutation,
 } from 'hooks';
@@ -30,16 +31,19 @@ import dayjs, { Dayjs } from 'dayjs';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { dateFormat } from 'constants/global';
-import { format } from 'date-fns';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { dateFormat, dateTimeFormat } from 'constants/global';
+import { format, isBefore } from 'date-fns';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useUpdateEffect } from 'react-use';
 import SaveIcon from '@mui/icons-material/Save';
 import { Loading } from 'components/Loading';
 import { Box } from '@mui/system';
+import { useAuthUser } from '@react-query-firebase/auth';
+import { auth } from 'config/firebase';
 
 function Home() {
-    const [value, setValue] = React.useState<Date | null>(null);
+    const isLogged = useIsLogged();
     const { data } = useConfigQuery();
     const { mutate, isLoading } = useUpdateConfigMutation();
     const { t } = useTranslation();
@@ -47,33 +51,24 @@ function Home() {
         nextTournamentDate: Date | null;
     }>();
 
-    console.log(value, 'value');
-
     const nextTournamentDate = useWatch({
         control,
         name: `nextTournamentDate`,
     });
 
-    // const handleChange = useCallback(
-    //     (newValue: Date | null) => {
-    //         setValue(newValue);
-
-    //         mutate({ nextTournamentDate: newValue ? format(newValue, dateFormat) : null });
-    //     },
-    //     [mutate]
-    // );
-
-    // useUpdateEffect(() => {
-    //     mutate({
-    //         nextTournamentDate: nextTournamentDate ? format(nextTournamentDate, dateFormat) : null,
-    //     });
-    // }, [nextTournamentDate]);
+    console.log(isLogged, 'isLogged');
 
     useEffect(() => {
         const date = data?.data()?.nextTournamentDate;
 
         if (data) {
-            reset({ nextTournamentDate: date ? new Date(date) : null });
+            reset({
+                nextTournamentDate: date
+                    ? isBefore(new Date(date), new Date())
+                        ? null
+                        : new Date(date)
+                    : null,
+            });
         }
     }, [data, reset]);
 
@@ -96,31 +91,43 @@ function Home() {
                                     <Controller
                                         name="nextTournamentDate"
                                         control={control}
-                                        render={({ field, fieldState: { error } }) => (
-                                            <MobileDatePicker
-                                                {...field}
-                                                loading={isLoading}
-                                                className="w-32"
-                                                inputFormat={dateFormat}
-                                                renderInput={(params) => <TextField {...params} />}
-                                            />
-                                        )}
+                                        render={({ field, fieldState: { error } }) =>
+                                            isLogged ? (
+                                                <DateTimePicker
+                                                    {...field}
+                                                    loading={isLoading}
+                                                    className="w-56"
+                                                    inputFormat={dateTimeFormat}
+                                                    renderInput={(params) => (
+                                                        <TextField {...params} />
+                                                    )}
+                                                />
+                                            ) : (
+                                                <span>
+                                                    {field.value
+                                                        ? format(field.value, dateTimeFormat)
+                                                        : t('Jeszcze nie ogłoszono')}
+                                                </span>
+                                            )
+                                        }
                                     />
 
-                                    <IconButton
-                                        color="primary"
-                                        size="small"
-                                        disabled={isLoading}
-                                        onClick={() => {
-                                            mutate({
-                                                nextTournamentDate: nextTournamentDate
-                                                    ? format(nextTournamentDate, dateFormat)
-                                                    : null,
-                                            });
-                                        }}
-                                    >
-                                        <SaveIcon />
-                                    </IconButton>
+                                    {isLogged && (
+                                        <IconButton
+                                            color="primary"
+                                            size="small"
+                                            disabled={isLoading}
+                                            onClick={() => {
+                                                mutate({
+                                                    nextTournamentDate: nextTournamentDate
+                                                        ? format(nextTournamentDate, dateTimeFormat)
+                                                        : null,
+                                                });
+                                            }}
+                                        >
+                                            <SaveIcon />
+                                        </IconButton>
+                                    )}
                                 </Box>
                             </Loading>
                         </Paper>

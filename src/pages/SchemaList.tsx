@@ -5,7 +5,7 @@ import { TableCell } from 'style/components';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
-import { useSchemaListQuery } from 'hooks';
+import { useIsLogged, useSchemaListQuery } from 'hooks';
 import { find, map, size } from 'lodash';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
@@ -18,6 +18,11 @@ function SchemaList() {
     const { data, isLoading } = useSchemaListQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const isLogged = useIsLogged();
+
+    if (!isLogged) {
+        navigate(generatePath(routes.HOME.path));
+    }
 
     if (isLoading) {
         return <CircularProgress size={24} />;

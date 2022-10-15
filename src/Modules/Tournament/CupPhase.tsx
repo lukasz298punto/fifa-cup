@@ -28,16 +28,6 @@ function CupPhase({ schema, index, control }: Props) {
         name: `phases.${index}.results`,
     });
 
-    // useEffect(() => {
-    //     console.log('replace-cup', phase.pairCount);
-    //     replace(
-    //         map(range(0, Number(phase.pairCount) || 0), () => ({
-    //             playerA: { id: '', score: '' },
-    //             playerB: { id: '', score: '' },
-    //         }))
-    //     );
-    // }, [phase.pairCount, replace]);
-
     const handleOnAdd = useCallback(
         (result: Result) => {
             append(result);

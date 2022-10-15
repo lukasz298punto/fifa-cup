@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
 import { TableContainer } from 'components/TableContainer';
-import { useAllPlayerListQuery } from 'hooks';
+import { useAllPlayerListQuery, useIsLogged } from 'hooks';
 import { concat, filter, includes, last, map } from 'lodash';
 import { EditedRow } from 'Modules/Player';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ export type Players = {
 
 function PlayerList() {
     const { t } = useTranslation();
+    const isLogged = useIsLogged();
     const navigate = useNavigate();
     const [editableRows, setEditableRows] = useState<string[]>([]);
 
@@ -77,14 +78,16 @@ function PlayerList() {
 
     return (
         <TableContainer>
-            <Button
-                startIcon={<AddIcon />}
-                onClick={() => {
-                    append({ firstName: '', lastName: '', active: 1 });
-                }}
-            >
-                {t('Dodaj zawodnika')}
-            </Button>
+            {isLogged && (
+                <Button
+                    startIcon={<AddIcon />}
+                    onClick={() => {
+                        append({ firstName: '', lastName: '', active: 1 });
+                    }}
+                >
+                    {t('Dodaj zawodnika')}
+                </Button>
+            )}
             <Table>
                 <TableHead>
                     <TableRow>

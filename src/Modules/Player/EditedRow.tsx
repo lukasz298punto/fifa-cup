@@ -5,7 +5,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import TableRow from '@mui/material/TableRow';
 import { Loading } from 'components/Loading';
-import { useStorePlayerMutation, useUpdatePlayerMutation } from 'hooks';
+import { useIsLogged, useStorePlayerMutation, useUpdatePlayerMutation } from 'hooks';
 import { Players } from 'pages/PlayerList';
 import React from 'react';
 import {
@@ -47,6 +47,7 @@ function EditedRow({
     const { mutate: updateMutate, isLoading: updateIsLoading } = useUpdatePlayerMutation(
         field.id || ''
     );
+    const isLogged = useIsLogged();
     const { mutate: storeMutate, isLoading: storeIsLoading } = useStorePlayerMutation();
 
     return (
@@ -118,9 +119,11 @@ function EditedRow({
                 <Box className="flex justify-center">
                     {!isEdited ? (
                         <>
-                            <IconButton size="small" onClick={() => onEdit(field)}>
-                                <EditIcon />
-                            </IconButton>
+                            {isLogged && (
+                                <IconButton size="small" onClick={() => onEdit(field)}>
+                                    <EditIcon />
+                                </IconButton>
+                            )}
                             <IconButton
                                 size="small"
                                 onClick={(e) => {
@@ -161,7 +164,6 @@ function EditedRow({
                                                     },
                                                     {
                                                         onSuccess: () => {
-                                                            // queryClient.refetchQueries('players');
                                                             onCancel(field, index);
                                                         },
                                                     }
@@ -175,7 +177,6 @@ function EditedRow({
                                                     },
                                                     {
                                                         onSuccess: () => {
-                                                            // queryClient.refetchQueries('players');
                                                             onCancel(field, index);
                                                         },
                                                     }

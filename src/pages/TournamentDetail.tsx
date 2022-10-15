@@ -16,7 +16,12 @@ import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { ScoreRow, ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById } from 'helpers/global';
-import { useActivePlayerListQuery, useSchemaQuery, useUpdateTournamentMutation } from 'hooks';
+import {
+    useActivePlayerListQuery,
+    useIsLogged,
+    useSchemaQuery,
+    useUpdateTournamentMutation,
+} from 'hooks';
 import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
 import 'lodash.combinations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -53,6 +58,7 @@ function TournamentDetail() {
     const [tab, setTab] = useState('0');
     const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
     const { t } = useTranslation();
+    const isLogged = useIsLogged();
 
     const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
         id as string
@@ -106,9 +112,6 @@ function TournamentDetail() {
                 });
             }
         }
-        return () => {
-            console.log('Noniec');
-        };
     }, [reset, tournament, schema]);
 
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
@@ -143,7 +146,7 @@ function TournamentDetail() {
 
     useDebounce(
         () => {
-            if (tournament && schema) {
+            if (tournament && schema && isLogged) {
                 console.log('odpalamy');
                 handleOnSubmit()();
             }
@@ -174,7 +177,7 @@ function TournamentDetail() {
                     </TabPanel>
                 ))}
             <Box className="px-6 pb-4">
-                {tournament?.startDate && !tournament?.endDate && (
+                {isLogged && tournament?.startDate && !tournament?.endDate && (
                     <Button
                         onClick={handleOnSubmit(UpdateType.End)}
                         startIcon={<StopCircleIcon />}
@@ -182,7 +185,7 @@ function TournamentDetail() {
                         children={t('Zakończ turniej')}
                     />
                 )}
-                {!tournament?.startDate && !tournament?.endDate && (
+                {isLogged && !tournament?.startDate && !tournament?.endDate && (
                     <Button
                         onClick={handleOnSubmit(UpdateType.Start)}
                         startIcon={<PlayCircleFilledWhiteIcon />}
