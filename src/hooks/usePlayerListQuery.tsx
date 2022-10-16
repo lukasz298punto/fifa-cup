@@ -14,12 +14,7 @@ function useAllPlayerListQuery(subscribe = false) {
 export function useActivePlayerListQuery() {
     const ref = query(collection(firestore, 'players'), where('active', '==', 1)) as Query<Player>;
 
-    return useFirestoreQuery(
-        [playerListQueryKey, 'active'],
-        ref,
-        {},
-        { cacheTime: 0, staleTime: 0 }
-    );
+    return useFirestoreQuery([playerListQueryKey, 'active'], ref, { subscribe: true });
 }
 
 export default useAllPlayerListQuery;

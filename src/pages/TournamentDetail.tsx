@@ -1,5 +1,6 @@
 import {
     Alert,
+    Breadcrumbs,
     Button,
     ButtonGroup,
     CircularProgress,
@@ -46,6 +47,8 @@ import { CupPhase, GroupsPhase } from 'Modules/Tournament';
 import { TabPanel } from 'components/TabPanel';
 import { format } from 'date-fns';
 import { dateTimeFormat } from 'constants/global';
+import { Title } from 'components/Title';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 enum UpdateType {
     End,
@@ -58,6 +61,9 @@ function TournamentDetail() {
     const [tab, setTab] = useState('0');
     const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
     const { t } = useTranslation();
+
+    console.log(id, 'id');
+
     const isLogged = useIsLogged();
 
     const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
@@ -160,41 +166,47 @@ function TournamentDetail() {
     }
 
     return (
-        <Paper>
-            <Tabs value={tab} onChange={handleChange} variant="scrollable">
-                {map(schema?.phases, (value, index) => (
-                    <Tab label={value.name} value={String(index)} key={index} />
-                ))}
-            </Tabs>
-            {schema &&
-                map(schema?.phases, (value, index) => (
-                    <TabPanel value={tab} index={String(index)} className="p-3" key={index}>
-                        {value.isGroupStage === GroupStageType.Cup ? (
-                            <CupPhase schema={schema} index={index} control={control} />
-                        ) : (
-                            <GroupsPhase schema={schema} index={index} control={control} />
-                        )}
-                    </TabPanel>
-                ))}
-            <Box className="px-6 pb-4">
-                {isLogged && tournament?.startDate && !tournament?.endDate && (
-                    <Button
-                        onClick={handleOnSubmit(UpdateType.End)}
-                        startIcon={<StopCircleIcon />}
-                        color="primary"
-                        children={t('Zakończ turniej')}
-                    />
-                )}
-                {isLogged && !tournament?.startDate && !tournament?.endDate && (
-                    <Button
-                        onClick={handleOnSubmit(UpdateType.Start)}
-                        startIcon={<PlayCircleFilledWhiteIcon />}
-                        color="primary"
-                        children={t('Wystartuj turniej')}
-                    />
-                )}
+        <>
+            <Box>
+                <EmojiEventsIcon className="text-xs mr-1" />
+                <span className="text-xs">{tournament?.name}</span>
             </Box>
-        </Paper>
+            <Paper>
+                <Tabs value={tab} onChange={handleChange} variant="scrollable">
+                    {map(schema?.phases, (value, index) => (
+                        <Tab label={value.name} value={String(index)} key={index} />
+                    ))}
+                </Tabs>
+                {schema &&
+                    map(schema?.phases, (value, index) => (
+                        <TabPanel value={tab} index={String(index)} className="p-3" key={index}>
+                            {value.isGroupStage === GroupStageType.Cup ? (
+                                <CupPhase schema={schema} index={index} control={control} />
+                            ) : (
+                                <GroupsPhase schema={schema} index={index} control={control} />
+                            )}
+                        </TabPanel>
+                    ))}
+                <Box className="px-6 pb-4">
+                    {isLogged && tournament?.startDate && !tournament?.endDate && (
+                        <Button
+                            onClick={handleOnSubmit(UpdateType.End)}
+                            startIcon={<StopCircleIcon />}
+                            color="primary"
+                            children={t('Zakończ turniej')}
+                        />
+                    )}
+                    {isLogged && !tournament?.startDate && !tournament?.endDate && (
+                        <Button
+                            onClick={handleOnSubmit(UpdateType.Start)}
+                            startIcon={<PlayCircleFilledWhiteIcon />}
+                            color="primary"
+                            children={t('Wystartuj turniej')}
+                        />
+                    )}
+                </Box>
+            </Paper>
+        </>
     );
 }
 export default TournamentDetail;

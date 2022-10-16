@@ -73,8 +73,6 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
         [handleClose, modalIndex, update]
     );
 
-    console.log(results, 'results');
-
     useUpdateEffect(() => {
         if (isEmpty(filter(players, (field) => !field.id)) && isEmpty(results)) {
             const baseCombinations = shuffle(

@@ -1,5 +1,5 @@
 import { matchStatus } from 'constants/global';
-import { getMatchStatus, getPkt } from 'helpers/global';
+import { getMatchStatus, getPkt, isCup } from 'helpers/global';
 import {
     concat,
     filter,
@@ -11,6 +11,8 @@ import {
     size,
     orderBy,
     isNil,
+    find,
+    compact,
 } from 'lodash';
 import 'lodash.combinations';
 import { CupDetail, GroupDetail, Player, Result } from 'types/global';
@@ -21,6 +23,47 @@ type MatchResult = {
     minus: number;
     diff: number;
     pkt: number;
+};
+
+const joinDuplicate = (arr: Result[]) => {
+    return reduce(
+        arr,
+        (acc: Result[], current) => {
+            return find(acc, { playerA: { id: current.playerA.id } })
+                ? map(acc, (value) => {
+                      if (value.playerA.id === current.playerA.id) {
+                          return {
+                              ...value,
+                              playerA: {
+                                  ...value.playerA,
+                                  score: String(
+                                      parseInt(value.playerA.score) +
+                                          parseInt(current.playerA.score)
+                                  ),
+                                  penaltyScore: String(
+                                      parseInt(value.playerA?.penaltyScore || '0') +
+                                          parseInt(current.playerA?.penaltyScore || '0')
+                                  ),
+                              },
+                              playerB: {
+                                  ...value.playerB,
+                                  score: String(
+                                      parseInt(value.playerB.score) +
+                                          parseInt(current.playerB.score)
+                                  ),
+                                  penaltyScore: String(
+                                      parseInt(value.playerB?.penaltyScore || '0') +
+                                          parseInt(current.playerB?.penaltyScore || '0')
+                                  ),
+                              },
+                          };
+                      }
+                      return value;
+                  })
+                : concat(acc, current);
+        },
+        []
+    );
 };
 
 export const getAllResultsByPlayerId = (id: string, results: Result[]) =>
@@ -54,12 +97,12 @@ export const getAllResultsByPlayerId = (id: string, results: Result[]) =>
         []
     );
 
-export const getAllPlayersResults = (players: Omit<Player, 'active'>[], results: Result[]) => {
-    const resultList = map(players, (player) => {
-        const playerResult = getAllResultsByPlayerId(player?.id as string, results);
+export const getAllPlayersResults = (playersIds: (string | undefined)[], results: Result[]) => {
+    const resultList = map(compact(playersIds), (player) => {
+        const playerResult = getAllResultsByPlayerId(player, results);
 
         return {
-            id: player?.id || '',
+            id: player,
             pkt: reduce(playerResult, (acc, { pkt }) => acc + pkt, 0),
             m: size(playerResult),
             w: size(filter(playerResult, { status: matchStatus.W })),
@@ -74,45 +117,38 @@ export const getAllPlayersResults = (players: Omit<Player, 'active'>[], results:
     return orderBy(resultList, ['pkt', 'brDiff', 'brPlus'], ['desc', 'desc', 'desc']);
 };
 
-const isCup = (value: CupDetail | GroupDetail): value is CupDetail => 'results' in value;
-
 const getSequence = (result: CupDetail | GroupDetail) => {
     if (isCup(result)) {
         const results = reduce(
-            result?.results,
-            (acc, current) => {
-                if (current.playerA.score > current.playerB.score) {
-                    console.log(current.playerA, 'current.playerA');
+            joinDuplicate(result?.results),
+            (acc, { playerA, playerB }) => {
+                if (playerA.score > playerB.score) {
                     return {
-                        winners: concat(acc.winners, current.playerA.id),
-                        losers: concat(acc.winners, current.playerB.id),
+                        winners: concat(acc.winners, playerA.id),
+                        losers: concat(acc.losers, playerB.id),
                     };
                 }
 
-                if (current.playerB.score > current.playerA.score) {
+                if (playerB.score > playerA.score) {
                     return {
-                        winners: concat(acc.winners, current.playerB.id),
-                        losers: concat(acc.winners, current.playerA.id),
+                        winners: concat(acc.winners, playerB.id),
+                        losers: concat(acc.losers, playerA.id),
                     };
                 }
 
                 if (
-                    current.playerA.score === current.playerB.score &&
-                    !isNil(current.playerA.penaltyScore) &&
-                    !isNil(current.playerB.penaltyScore)
+                    playerA.score === playerB.score &&
+                    !isNil(playerA.penaltyScore) &&
+                    !isNil(playerB.penaltyScore)
                 ) {
                     return {
                         winners: concat(
                             acc.winners,
-                            current.playerA.penaltyScore > current.playerB.penaltyScore
-                                ? current.playerA.id
-                                : current.playerB.id
+                            playerA.penaltyScore > playerB.penaltyScore ? playerA.id : playerB.id
                         ),
                         losers: concat(
                             acc.losers,
-                            current.playerA.penaltyScore < current.playerB.penaltyScore
-                                ? current.playerA.id
-                                : current.playerB.id
+                            playerA.penaltyScore < playerB.penaltyScore ? playerA.id : playerB.id
                         ),
                     };
                 }
@@ -125,7 +161,6 @@ const getSequence = (result: CupDetail | GroupDetail) => {
             }
         );
 
-        console.log(results, 'results`1```````````````');
         return [...results.winners, ...results.losers];
     } else {
         const allGroups = reduce(
@@ -139,14 +174,12 @@ const getSequence = (result: CupDetail | GroupDetail) => {
             { players: [] as Omit<Player, 'active'>[], results: [] as Result[] }
         );
 
-        return map(getAllPlayersResults(allGroups.players, allGroups.results), 'id');
+        return map(getAllPlayersResults(map(allGroups.players, 'id'), allGroups.results), 'id');
     }
 };
 
 export const getTournamentSequence = (phases: (CupDetail | GroupDetail)[] | undefined) => {
     if (!phases) return [];
-
-    console.log(reverse(phases), 'ddxxx---------');
 
     return reduce(
         flatten(map(reverse(phases), getSequence)),

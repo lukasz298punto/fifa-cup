@@ -52,9 +52,6 @@ function TournamentList() {
                         <TableCell width={200} align="center">
                             {t('Data zakończenia')}
                         </TableCell>
-                        {/* <TableCell width={50} align="center">
-                            {t('Status')}
-                        </TableCell> */}
                         <TableCell width={100} align="center">
                             {t('Akcje')}
                         </TableCell>

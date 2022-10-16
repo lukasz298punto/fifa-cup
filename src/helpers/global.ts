@@ -1,7 +1,7 @@
 import { matchStatus } from 'constants/global';
 import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import { find } from 'lodash';
-import { Player } from 'types/global';
+import { CupDetail, GroupDetail, Player } from 'types/global';
 
 export const getMatchStatus = (score: number) => {
     if (score === 0) return matchStatus.D;
@@ -31,3 +31,5 @@ export const findPlayerNameById = (
 
     return (player?.firstName || '') + ' ' + (player?.lastName || '');
 };
+
+export const isCup = (value: CupDetail | GroupDetail): value is CupDetail => 'results' in value;

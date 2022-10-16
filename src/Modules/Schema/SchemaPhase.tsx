@@ -51,8 +51,6 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
         keyName: 'formId',
     });
 
-    console.log(fields, 'fields', index);
-
     useEffect(() => {
         if (groupCount && isNew) {
             replace(map(range(0, groupCount), () => ({ playerCount: 3, promotion: 1 })));
@@ -124,12 +122,6 @@ function SchemaPhase({ control, index, field, visible, disabled }: Props) {
                             >
                                 <MenuItem value={TypeOfWin.OneMatch}>{t('Jeden mecz')}</MenuItem>
                                 <MenuItem value={TypeOfWin.TwoMatch}>{t('Dwumecz')}</MenuItem>
-                                {!isGroupStage && (
-                                    <MenuItem value={TypeOfWin.Best3}>{t('Best 3')}</MenuItem>
-                                )}
-                                {!isGroupStage && (
-                                    <MenuItem value={TypeOfWin.Best5}>{t('Best 5')}</MenuItem>
-                                )}
                             </Select>
                         )}
                     />

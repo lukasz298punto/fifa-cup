@@ -68,10 +68,8 @@ function ScoreTable({
             }));
         }
 
-        return getAllPlayersResults(players, results);
+        return getAllPlayersResults(map(players, 'id'), results);
     }, [results, players]);
-
-    console.log(result, 'result');
 
     return (
         <TableContainer className={className}>

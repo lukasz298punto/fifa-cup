@@ -74,8 +74,6 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
     const getCountOfMatches = () =>
         match(typeOfWin)
             .with(TypeOfWin.TwoMatch, () => 1)
-            .with(TypeOfWin.Best3, () => 2)
-            .with(TypeOfWin.Best5, () => 4)
             .otherwise(() => 0);
 
     const addMatch = (teamAId?: string, teamBId?: string) => {
@@ -102,7 +100,7 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                         control={control}
                         render={({ field: { value, onChange }, fieldState: { error } }) => (
                             <span className="text-xs break-all">
-                                {!value ? (
+                                {!value && isLogged ? (
                                     <>
                                         <RoundAddButton
                                             onAdd={() => {
@@ -208,50 +206,45 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                     )
                                 }
                             />
-                            {isDraw && (
-                                <Controller
-                                    defaultValue={result.playerB.penaltyScore}
-                                    name={getFormName('playerB.penaltyScore')}
-                                    control={control}
-                                    render={({
-                                        field: { onChange, value },
-                                        fieldState: { error },
-                                    }) =>
-                                        isLogged ? (
-                                            <TextField
-                                                disabled={disabled}
-                                                inputProps={{
-                                                    className: 'p-1 text-center text-xs',
-                                                }}
-                                                value={value}
-                                                onChange={(e) => {
-                                                    onChange(parseInputNumber(e.target.value));
-                                                }}
-                                                className="mx-1 w-10"
-                                                size="small"
-                                                type="number"
-                                                variant="filled"
-                                                placeholder={t('kr.')}
-                                            />
-                                        ) : (
-                                            <span className="text-xs mr-1 mb-[7px] -ml-[3px]">
-                                                {value}
-                                            </span>
-                                        )
-                                    }
-                                />
-                            )}
                         </>
                     </Box>
                 </Grid>
                 <Grid item className="flex justify-start items-center" xs={5}>
+                    {isDraw && (
+                        <Controller
+                            defaultValue={result.playerB.penaltyScore}
+                            name={getFormName('playerB.penaltyScore')}
+                            control={control}
+                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                isLogged ? (
+                                    <TextField
+                                        disabled={disabled}
+                                        inputProps={{
+                                            className: 'p-1 text-center text-xs',
+                                        }}
+                                        value={value}
+                                        onChange={(e) => {
+                                            onChange(parseInputNumber(e.target.value));
+                                        }}
+                                        className="mx-1 w-10"
+                                        size="small"
+                                        type="number"
+                                        variant="filled"
+                                        placeholder={t('kr.')}
+                                    />
+                                ) : (
+                                    <span className="text-xs mr-1 mb-[7px] -ml-[3px]">{value}</span>
+                                )
+                            }
+                        />
+                    )}
                     <Controller
                         defaultValue={result.playerB.id}
                         name={getFormName('playerB.id')}
                         control={control}
                         render={({ field: { value, onChange }, fieldState: { error } }) => (
                             <span className="text-xs break-all">
-                                {!value ? (
+                                {!value && isLogged ? (
                                     <>
                                         <RoundAddButton
                                             onAdd={() => {

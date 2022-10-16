@@ -56,8 +56,6 @@ function Home() {
         name: `nextTournamentDate`,
     });
 
-    console.log(isLogged, 'isLogged');
-
     useEffect(() => {
         const date = data?.data()?.nextTournamentDate;
 

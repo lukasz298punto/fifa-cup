@@ -42,8 +42,6 @@ function CupPhase({ schema, index, control }: Props) {
         ]);
     }, [resultsValues]);
 
-    console.log(results, 'results---222');
-
     return (
         <>
             {map(results, (result, i) => (
