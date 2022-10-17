@@ -38,8 +38,8 @@ const getMedalsByPlayerId = (players: string[][], playerId: string) => {
         (acc, current) => {
             return {
                 first: current[0] === playerId ? acc.first + 1 : acc.first,
-                second: current[1] === playerId ? acc.first + 1 : acc.second,
-                third: current[2] === playerId ? acc.first + 1 : acc.third,
+                second: current[1] === playerId ? acc.second + 1 : acc.second,
+                third: current[2] === playerId ? acc.third + 1 : acc.third,
             };
         },
         {
@@ -64,12 +64,12 @@ function LastTournament() {
 
         console.log(www, 'www');
 
-        const winners = {
-            first: flatten(filter(www, (val, index) => index === 0)),
-            second: flatten(filter(www, (val, index) => index === 1)),
-            third: flatten(filter(www, (val, index) => index === 2)),
-        };
-        console.log(winners, 'winners');
+        // const winners = {
+        //     first: flatten(filter(www, (val, index) => index === 0)),
+        //     second: flatten(filter(www, (val, index) => index === 1)),
+        //     third: flatten(filter(www, (val, index) => index === 2)),
+        // };
+        // console.log(winners, 'winners');
 
         return filter(
             orderBy(

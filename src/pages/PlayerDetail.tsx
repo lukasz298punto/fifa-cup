@@ -55,14 +55,6 @@ function PlayerDetail() {
         return stats;
     }, [allResults, id]);
 
-    const tournamentStats = useMemo(() => {
-        return map(tournamentData?.docs, (snap) => {
-            const phases = snap.data()?.phases;
-
-            return getTournamentSequence(phases);
-        });
-    }, [tournamentData]);
-
     const statsList = useMemo(() => {
         return [
             {
