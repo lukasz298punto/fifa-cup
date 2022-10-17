@@ -15,12 +15,10 @@ import { Player } from 'types/global';
 export const playerQueryKey = 'player';
 
 function usePlayerQuery(id: string) {
-    const ref = doc(firestore, 'players', id) as DocumentReference<Player>;
+    const ref = (id ? doc(firestore, 'players', id) : null) as DocumentReference<Player>;
+    const query = useFirestoreDocument<Player>([playerQueryKey, id], ref);
 
-    return useFirestoreQuery(
-        [playerQueryKey],
-        query(collection(firestore, 'wins'), where('player', '==', ref))
-    );
+    return query;
 }
 
 export default usePlayerQuery;

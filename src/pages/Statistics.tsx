@@ -7,7 +7,8 @@ import TableRow from '@mui/material/TableRow';
 import { Box } from '@mui/system';
 import { Loading } from 'components/Loading';
 import { TableContainer } from 'components/TableContainer';
-import { getAllPlayersResults } from 'helpers/calculate';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { getAllPlayersResults, getAllResults } from 'helpers/calculate';
 import { isCup } from 'helpers/global';
 import { useAllCompletedTournamentListQuery, useAllPlayerListQuery } from 'hooks';
 import {
@@ -28,7 +29,7 @@ import { FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TableCell } from 'style/components';
-import { Player } from 'types/global';
+import { Player, TournamentSchema } from 'types/global';
 
 export type Players = {
     players: Player[];
@@ -59,19 +60,7 @@ function Statistics() {
         useAllCompletedTournamentListQuery();
 
     const allResults = useMemo(() => {
-        return flatten(
-            flatMap(tournamentData?.docs, (tour) => {
-                const data = tour.data();
-
-                return map(data.phases, (phase) => {
-                    if (isCup(phase)) {
-                        return phase.results;
-                    } else {
-                        return flatMap(phase.groups, (group) => group.results);
-                    }
-                });
-            })
-        );
+        return getAllResults(tournamentData?.docs);
     }, [tournamentData]);
 
     const getPlayerName = useCallback(
@@ -93,8 +82,6 @@ function Statistics() {
         const leastBrMinus = orderBy(stats, 'brMinus', 'asc');
         const mostW = orderBy(stats, 'w', 'desc');
         const mostP = orderBy(stats, 'p', 'desc');
-
-        console.log(stats, 'stats');
 
         return {
             mostBrPlus: {
@@ -167,8 +154,8 @@ function Statistics() {
 
     return (
         <Grid container spacing={2}>
-            {map(statsList, ({ name, value, player }) => (
-                <Block name={name} value={value} player={player} />
+            {map(statsList, ({ name, value, player }, index) => (
+                <Block name={name} value={value} player={player} key={index} />
             ))}
         </Grid>
     );

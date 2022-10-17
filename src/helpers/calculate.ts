@@ -1,4 +1,5 @@
 import { matchStatus } from 'constants/global';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { getMatchStatus, getPkt, isCup } from 'helpers/global';
 import {
     concat,
@@ -13,9 +14,10 @@ import {
     isNil,
     find,
     compact,
+    flatMap,
 } from 'lodash';
 import 'lodash.combinations';
-import { CupDetail, GroupDetail, Player, Result } from 'types/global';
+import { CupDetail, GroupDetail, Player, Result, TournamentSchema } from 'types/global';
 
 type MatchResult = {
     status: keyof typeof matchStatus;
@@ -189,3 +191,18 @@ export const getTournamentSequence = (phases: (CupDetail | GroupDetail)[] | unde
         [] as string[]
     );
 };
+
+export const getAllResults = (docs: QueryDocumentSnapshot<TournamentSchema>[] | undefined) =>
+    flatten(
+        flatMap(docs, (tour) => {
+            const data = tour.data();
+
+            return map(data.phases, (phase) => {
+                if (isCup(phase)) {
+                    return phase.results;
+                } else {
+                    return flatMap(phase.groups, (group) => group.results);
+                }
+            });
+        })
+    );
