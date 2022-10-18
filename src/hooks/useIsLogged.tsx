@@ -8,7 +8,7 @@ function useIsLogged() {
 
     console.log(user?.data, 'user?.data');
 
-    if (!user?.data) {
+    if (!user?.data === undefined) {
         return true;
     }
 

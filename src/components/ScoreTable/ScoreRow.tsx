@@ -87,7 +87,7 @@ function ScoreRow({
                         name={getFormName('playerA.id')}
                         control={control}
                         render={({ field: { value, onChange } }) => (
-                            <span className="text-xs break-all">
+                            <span className="text-xs break-words text-right">
                                 {!value && isLogged ? (
                                     <>
                                         <RoundAddButton
@@ -106,8 +106,8 @@ function ScoreRow({
                                         />
                                     </>
                                 ) : (
-                                    <span>
-                                        {!isGroup && (
+                                    <span className="flex items-center">
+                                        {!isGroup && isLogged && (
                                             <>
                                                 <PlayerPicker
                                                     onClose={handleTeamAClose}
@@ -152,14 +152,16 @@ function ScoreRow({
                                         onChange={(e) => {
                                             onChange(parseInputNumber(e.target.value));
                                         }}
-                                        className="mx-1 w-10"
+                                        className="mx-1 w-8"
                                         size="small"
                                         type="number"
                                         variant="filled"
                                         placeholder={t('kr.')}
                                     />
                                 ) : (
-                                    <span className="text-xs ml-1 mb-[7px] -mr-[3px]">{value}</span>
+                                    <span className="text-xs ml-1 mb-[7px] -mr-[3px] opacity-15">
+                                        {value}
+                                    </span>
                                 )
                             }
                         />
@@ -183,7 +185,7 @@ function ScoreRow({
                                         onChange={(e) => {
                                             onChange(parseInputNumber(e.target.value));
                                         }}
-                                        className="mx-1 w-10"
+                                        className="mx-1 w-8"
                                         size="small"
                                         type="number"
                                         variant="outlined"
@@ -211,7 +213,7 @@ function ScoreRow({
                                             onChange={(e) => {
                                                 onChange(parseInputNumber(e.target.value));
                                             }}
-                                            className="mx-1 w-10"
+                                            className="mx-1 w-8"
                                             size="small"
                                             type="number"
                                             variant="outlined"
@@ -242,14 +244,16 @@ function ScoreRow({
                                         onChange={(e) => {
                                             onChange(parseInputNumber(e.target.value));
                                         }}
-                                        className="mx-1 w-10"
+                                        className="mx-1 w-8"
                                         size="small"
                                         type="number"
                                         variant="filled"
                                         placeholder={t('kr.')}
                                     />
                                 ) : (
-                                    <span className="text-xs mr-1 mb-[7px] -ml-[3px]">{value}</span>
+                                    <span className="text-xs mr-1 mb-[7px] -ml-[3px] opacity-15">
+                                        {value}
+                                    </span>
                                 )
                             }
                         />
@@ -259,7 +263,7 @@ function ScoreRow({
                         name={getFormName('playerB.id')}
                         control={control}
                         render={({ field: { value, onChange } }) => (
-                            <span className="text-xs break-all">
+                            <span className="text-xs break-words">
                                 {!value && isLogged ? (
                                     <>
                                         <RoundAddButton
@@ -278,9 +282,9 @@ function ScoreRow({
                                         />
                                     </>
                                 ) : (
-                                    <span>
+                                    <span className="flex items-center">
                                         {findPlayerNameById(value, data?.docs)}
-                                        {!isGroup && (
+                                        {!isGroup && isLogged && (
                                             <>
                                                 <PlayerPicker
                                                     onClose={handleTeamBClose}
