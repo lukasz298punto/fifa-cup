@@ -1,54 +1,29 @@
-import {
-    Alert,
-    Breadcrumbs,
-    Button,
-    ButtonGroup,
-    CircularProgress,
-    Divider,
-    Grid,
-    Paper,
-    TextField,
-} from '@mui/material';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import SaveIcon from '@mui/icons-material/Save';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import { Button, CircularProgress, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
-import { PlayerPicker } from 'components/PlayerPicker';
-import { RoundAddButton } from 'components/RoundAddButton';
-import { ScoreRow, ScoreTable } from 'components/ScoreTable';
-import { findPlayerNameById } from 'helpers/global';
+import { Loading } from 'components/Loading';
+import { TabPanel } from 'components/TabPanel';
+import { dateTimeFormat } from 'constants/global';
+import { format } from 'date-fns';
 import {
-    useActivePlayerListQuery,
     useIsLogged,
     useSchemaQuery,
+    useTournamentQuery,
     useUpdateTournamentMutation,
 } from 'hooks';
-import { combinations, compact, concat, filter, isEmpty, map, range } from 'lodash';
+import { map, range } from 'lodash';
 import 'lodash.combinations';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    Controller,
-    SubmitErrorHandler,
-    SubmitHandler,
-    useFieldArray,
-    useForm,
-    useWatch,
-} from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useDebounce, useUpdateEffect } from 'react-use';
-import { GroupStageType, Player, TournamentSchema, TypeOfWin } from 'types/global';
-import SaveIcon from '@mui/icons-material/Save';
-import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
-import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { useTournamentQuery } from 'hooks';
-import { useParams } from 'react-router-dom';
-import { Loading } from 'components/Loading';
 import { CupPhase, GroupsPhase } from 'Modules/Tournament';
-import { TabPanel } from 'components/TabPanel';
-import { format } from 'date-fns';
-import { dateTimeFormat } from 'constants/global';
-import { Title } from 'components/Title';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { GroupStageType, TournamentSchema } from 'types/global';
 
 enum UpdateType {
     End,
@@ -61,8 +36,6 @@ function TournamentDetail() {
     const [tab, setTab] = useState('0');
     const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
     const { t } = useTranslation();
-
-    console.log(id, 'id');
 
     const isLogged = useIsLogged();
 
@@ -80,12 +53,7 @@ function TournamentDetail() {
         return schemaData?.data();
     }, [schemaData]);
 
-    const { control, handleSubmit, reset, register, setValue, watch } = useForm<TournamentSchema>();
-
-    const phases = useWatch({
-        control,
-        name: 'phases',
-    });
+    const { control, handleSubmit, reset } = useForm<TournamentSchema>();
 
     useEffect(() => {
         if (tournament && schema) {
@@ -129,6 +97,7 @@ function TournamentDetail() {
             () => {
                 handleSubmit(
                     async (data) => {
+                        console.log(data);
                         mutate({
                             ...data,
                             startDate:
@@ -150,17 +119,6 @@ function TournamentDetail() {
         [handleSubmit, mutate]
     );
 
-    useDebounce(
-        () => {
-            if (tournament && schema && isLogged) {
-                console.log('odpalamy');
-                handleOnSubmit()();
-            }
-        },
-        4000,
-        [phases]
-    );
-
     if (tournamentIsLoading || schemaIsLoading) {
         return <CircularProgress size={24} />;
     }
@@ -170,6 +128,7 @@ function TournamentDetail() {
             <Box>
                 <EmojiEventsIcon className="text-xs mr-1" />
                 <span className="text-xs">{tournament?.name}</span>
+                {tournament?.endDate && <span className="text-xs ml-1">({t('Zakończony')})</span>}
             </Box>
             <Paper>
                 <Tabs value={tab} onChange={handleChange} variant="scrollable">
@@ -187,7 +146,7 @@ function TournamentDetail() {
                             )}
                         </TabPanel>
                     ))}
-                <Box className="px-6 pb-4">
+                <Box className="px-6 pb-4 flex">
                     {isLogged && tournament?.startDate && !tournament?.endDate && (
                         <Button
                             onClick={handleOnSubmit(UpdateType.End)}
@@ -203,6 +162,16 @@ function TournamentDetail() {
                             color="primary"
                             children={t('Wystartuj turniej')}
                         />
+                    )}
+                    {isLogged && (
+                        <Loading loading={isLoading}>
+                            <Button
+                                onClick={handleOnSubmit()}
+                                startIcon={<SaveIcon />}
+                                color="primary"
+                                children={t('Zapisz zmiany')}
+                            />
+                        </Loading>
                     )}
                 </Box>
             </Paper>

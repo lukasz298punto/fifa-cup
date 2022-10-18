@@ -4,15 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
-import {
-    CircularProgress,
-    Grid,
-    IconButton,
-    Paper,
-    TextField,
-    Typography,
-    useMediaQuery,
-} from '@mui/material';
+import { Grid, IconButton, Paper, TextField, Typography, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
@@ -21,24 +13,11 @@ import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import { Loading } from 'components/Loading';
 import { Title } from 'components/Title';
-import { useStoreSchemaMutation, useSchemaQuery } from 'hooks';
-import { schemaListQueryKey } from 'hooks/useSchemaListQuery';
 import { get, map, size } from 'lodash';
 import SchemaPhase from 'Modules/Schema/SchemaPhase';
-import React, { useEffect, useState } from 'react';
-import {
-    Control,
-    Controller,
-    SubmitErrorHandler,
-    SubmitHandler,
-    useFieldArray,
-    useForm,
-    useWatch,
-} from 'react-hook-form';
+import React, { useState } from 'react';
+import { Control, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { QueryClient, useQueryClient } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import { routes } from 'routing/routes';
 import { Fn, GroupStageType, Schema, TypeOfWin } from 'types/global';
 
 function FormButton({
@@ -78,7 +57,7 @@ function SchemaDetail({ control, onSubmit, submitLoading, isNew }: Props) {
     const { t } = useTranslation();
     const matches = useMediaQuery(get(theme, 'breakpoints').down('sm'));
     const [activeStep, setActiveStep] = useState(0);
-    const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control,
         name: 'phases',
         keyName: 'formId',
@@ -132,8 +111,8 @@ function SchemaDetail({ control, onSubmit, submitLoading, isNew }: Props) {
                             rules={{ required: t('To pole jest wymagane') }}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
-                                    disabled={disabled}
                                     {...field}
+                                    disabled={disabled}
                                     label={t('Nazwa schematu')}
                                     error={!!error}
                                     helperText={error?.message || ''}

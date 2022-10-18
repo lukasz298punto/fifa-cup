@@ -1,37 +1,17 @@
-import {
-    Alert,
-    Button,
-    ButtonGroup,
-    CircularProgress,
-    Divider,
-    Grid,
-    Paper,
-    TextField,
-} from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Divider, Grid, IconButton, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
-import { ScoreTable } from 'components/ScoreTable';
 import { findPlayerNameById, parseInputNumber } from 'helpers/global';
 import { useActivePlayerListQuery, useIsLogged } from 'hooks';
-import { combinations, compact, filter, forEach, isEmpty, map, range } from 'lodash';
+import { forEach, range } from 'lodash';
 import 'lodash.combinations';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    Control,
-    Controller,
-    useFieldArray,
-    UseFieldArrayInsert,
-    useForm,
-    useWatch,
-} from 'react-hook-form';
+import React, { useCallback, useState } from 'react';
+import { Control, Controller, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useUpdateEffect } from 'react-use';
-import { Fn, Player, PlayerResult, Result, TournamentSchema, TypeOfWin } from 'types/global';
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
+import { PlayerResult, Result, TournamentSchema, TypeOfWin } from 'types/global';
 
 type FormResult = Result & { formId: string };
 
@@ -42,10 +22,19 @@ type Props = {
     typeOfWin?: TypeOfWin;
     disabledPlayers?: string[];
     formName: any;
+    isGroup?: boolean;
 };
 
-function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName }: Props) {
-    const { data, isLoading } = useActivePlayerListQuery();
+function ScoreRow({
+    control,
+    result,
+    onAdd,
+    typeOfWin,
+    disabledPlayers,
+    formName,
+    isGroup = false,
+}: Props) {
+    const { data } = useActivePlayerListQuery();
     const { t } = useTranslation();
     const [teamAOpen, setTeamAOpen] = useState(false);
     const [teamBOpen, setTeamBOpen] = useState(false);
@@ -87,7 +76,6 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
         }
     };
 
-    const isDraw = onAdd && teamA?.score && teamB?.score && teamA?.score === teamB?.score;
     const disabled = !teamA?.id || !teamB?.id;
 
     return (
@@ -98,7 +86,7 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                         defaultValue={result.playerA.id}
                         name={getFormName('playerA.id')}
                         control={control}
-                        render={({ field: { value, onChange }, fieldState: { error } }) => (
+                        render={({ field: { value, onChange } }) => (
                             <span className="text-xs break-all">
                                 {!value && isLogged ? (
                                     <>
@@ -118,17 +106,42 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                         />
                                     </>
                                 ) : (
-                                    findPlayerNameById(value, data?.docs)
+                                    <span>
+                                        {!isGroup && (
+                                            <>
+                                                <PlayerPicker
+                                                    onClose={handleTeamAClose}
+                                                    open={teamAOpen}
+                                                    onPick={(player) => {
+                                                        onChange(player.id);
+                                                        handleTeamAClose();
+                                                    }}
+                                                    disabledPlayers={disabledPlayers}
+                                                />
+                                                <IconButton
+                                                    className="p-0"
+                                                    size="small"
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        setTeamAOpen(true);
+                                                    }}
+                                                >
+                                                    <RefreshIcon />
+                                                </IconButton>
+                                            </>
+                                        )}
+                                        {findPlayerNameById(value, data?.docs)}
+                                    </span>
                                 )}
                             </span>
                         )}
                     />
-                    {isDraw && (
+                    {!isGroup && (
                         <Controller
-                            defaultValue={result.playerB.penaltyScore}
+                            defaultValue={result.playerB.penaltyScore || ''}
                             name={getFormName('playerA.penaltyScore')}
                             control={control}
-                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                            render={({ field: { onChange, value } }) =>
                                 isLogged ? (
                                     <TextField
                                         disabled={disabled}
@@ -158,9 +171,10 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                             defaultValue={result.playerA.score}
                             name={getFormName('playerA.score')}
                             control={control}
-                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                            render={({ field: { onChange, value } }) =>
                                 isLogged ? (
                                     <TextField
+                                        autoComplete="off"
                                         disabled={disabled}
                                         inputProps={{
                                             className: 'p-1 text-center',
@@ -185,9 +199,10 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                 defaultValue={result.playerB.score}
                                 name={getFormName('playerB.score')}
                                 control={control}
-                                render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                render={({ field: { onChange, value } }) =>
                                     isLogged ? (
                                         <TextField
+                                            autoComplete="off"
                                             disabled={disabled}
                                             inputProps={{
                                                 className: 'p-1 text-center',
@@ -210,14 +225,15 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                     </Box>
                 </Grid>
                 <Grid item className="flex justify-start items-center" xs={5}>
-                    {isDraw && (
+                    {!isGroup && (
                         <Controller
-                            defaultValue={result.playerB.penaltyScore}
+                            defaultValue={result.playerB.penaltyScore || ''}
                             name={getFormName('playerB.penaltyScore')}
                             control={control}
-                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                            render={({ field: { onChange, value } }) =>
                                 isLogged ? (
                                     <TextField
+                                        autoComplete="off"
                                         disabled={disabled}
                                         inputProps={{
                                             className: 'p-1 text-center text-xs',
@@ -242,7 +258,7 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                         defaultValue={result.playerB.id}
                         name={getFormName('playerB.id')}
                         control={control}
-                        render={({ field: { value, onChange }, fieldState: { error } }) => (
+                        render={({ field: { value, onChange } }) => (
                             <span className="text-xs break-all">
                                 {!value && isLogged ? (
                                     <>
@@ -262,7 +278,32 @@ function ScoreRow({ control, result, onAdd, typeOfWin, disabledPlayers, formName
                                         />
                                     </>
                                 ) : (
-                                    findPlayerNameById(value, data?.docs)
+                                    <span>
+                                        {findPlayerNameById(value, data?.docs)}
+                                        {!isGroup && (
+                                            <>
+                                                <PlayerPicker
+                                                    onClose={handleTeamBClose}
+                                                    open={teamBOpen}
+                                                    onPick={(player) => {
+                                                        onChange(player.id);
+                                                        handleTeamBClose();
+                                                    }}
+                                                    disabledPlayers={disabledPlayers}
+                                                />
+                                                <IconButton
+                                                    className="p-0"
+                                                    size="small"
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        setTeamBOpen(true);
+                                                    }}
+                                                >
+                                                    <RefreshIcon />
+                                                </IconButton>
+                                            </>
+                                        )}
+                                    </span>
                                 )}
                             </span>
                         )}

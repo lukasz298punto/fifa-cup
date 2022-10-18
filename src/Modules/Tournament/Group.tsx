@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { ScoreRow, ScoreTable } from 'components/ScoreTable';
 import { useActivePlayerListQuery } from 'hooks';
-import { combinations, compact, concat, filter, isEmpty, map, range, shuffle } from 'lodash';
+import { combinations, compact, concat, filter, isEmpty, map, shuffle } from 'lodash';
 import 'lodash.combinations';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Control, useFieldArray, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useUpdateEffect } from 'react-use';
@@ -17,18 +17,13 @@ type Props = {
     promotion: any;
     index: number;
     phaseIndex: number;
-    playerCount: number;
 };
 
-function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }: Props) {
+function Group({ control, typeOfWin, promotion, index, phaseIndex }: Props) {
     const { t } = useTranslation();
     const { data, isLoading } = useActivePlayerListQuery();
 
-    const {
-        fields: players,
-        replace,
-        update,
-    } = useFieldArray({
+    const { fields: players, update } = useFieldArray({
         control,
         name: `phases.${phaseIndex}.groups.${index}.players`,
         keyName: 'formId',
@@ -128,6 +123,7 @@ function Group({ control, typeOfWin, promotion, index, phaseIndex, playerCount }
                         result.playerA.id &&
                         result.playerB.id && (
                             <ScoreRow
+                                isGroup
                                 key={result.formId}
                                 control={control}
                                 result={result}

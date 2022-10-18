@@ -102,11 +102,11 @@ function Statistics() {
             },
             mostW: {
                 player: getPlayerName(mostW[0]?.id),
-                value: mostW[0]?.brPlus,
+                value: mostW[0]?.w,
             },
             mostP: {
                 player: getPlayerName(mostP[0]?.id),
-                value: mostP[0]?.brPlus,
+                value: mostP[0]?.p,
             },
         };
     }, [data, allResults, getPlayerName]);

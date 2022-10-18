@@ -42,7 +42,6 @@ function GroupsPhase({ schema, index, control }: Props) {
             {map(phase.groups, (group, i) => (
                 <TabPanel key={i} value={tab} index={String(i)}>
                     <Group
-                        playerCount={group.playerCount}
                         control={control}
                         typeOfWin={phase.typeOfWin}
                         promotion={group.promotion}

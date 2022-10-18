@@ -140,7 +140,7 @@ function PlayerDetail() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>{t('Nazwa turnieju')}</TableCell>
-                                    <TableCell>{t('Pozycja')}</TableCell>
+                                    <TableCell width={70}>{t('Pozycja')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -152,7 +152,7 @@ function PlayerDetail() {
                                     return (
                                         <TableRow key={snap.id}>
                                             <TableCell>{tournament.name}</TableCell>
-                                            <TableCell>
+                                            <TableCell align="center">
                                                 {position ? position : t('Nie brał udziału')}
                                             </TableCell>
                                         </TableRow>

@@ -5,25 +5,23 @@ import {
     FormHelperText,
     FormLabel,
     Grid,
-    InputLabel,
     MenuItem,
     Paper,
     Select,
     TextField,
 } from '@mui/material';
 import { Loading } from 'components/Loading';
-import { firestore } from 'config/firebase';
-import { doc, DocumentReference } from 'firebase/firestore';
 import { useIsLogged, useSchemaListQuery, useStoreTournamentMutation } from 'hooks';
-import { map, range } from 'lodash';
+import { map } from 'lodash';
+import { useEffect } from 'react';
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
-import { Schema, Tournament } from 'types/global';
+import { Tournament } from 'types/global';
 
 function TournamentNew() {
-    const { control, handleSubmit, reset, trigger, getValues } = useForm<Tournament>();
+    const { control, handleSubmit } = useForm<Tournament>();
     const navigate = useNavigate();
     const { data, isLoading } = useSchemaListQuery();
     const { t } = useTranslation();
@@ -48,9 +46,11 @@ function TournamentNew() {
 
     const onError: SubmitErrorHandler<Tournament> = (data) => console.log(data);
 
-    if (!isLogged) {
-        navigate(generatePath(routes.HOME.path));
-    }
+    useEffect(() => {
+        if (!isLogged) {
+            navigate(generatePath(routes.HOME.path));
+        }
+    }, [isLogged, navigate]);
 
     return (
         <Paper className="p-4">
@@ -59,6 +59,7 @@ function TournamentNew() {
                     <Grid item xs={12} md={6}>
                         <Loading loading={isLoading}>
                             <Controller
+                                defaultValue={undefined}
                                 name="schemaId"
                                 control={control}
                                 rules={{ required: t('To pole jest wymagane') }}
@@ -72,7 +73,7 @@ function TournamentNew() {
                                             error={!!error}
                                         >
                                             {map(data?.docs, (docSnapshot) => {
-                                                const { name, phases } = docSnapshot.data();
+                                                const { name } = docSnapshot.data();
 
                                                 return (
                                                     <MenuItem

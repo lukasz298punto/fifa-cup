@@ -1,5 +1,5 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Chip, CircularProgress, IconButton } from '@mui/material';
+import { Chip, CircularProgress, IconButton, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { TableCell } from 'style/components';
@@ -10,7 +10,7 @@ import { TableContainer } from 'components/TableContainer';
 import { dateTimeFormat } from 'constants/global';
 import { format } from 'date-fns';
 import useTournamentListQuery from 'hooks/useTournamentListQuery';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
@@ -21,12 +21,14 @@ import DoneIcon from '@mui/icons-material/Done';
 import LoopIcon from '@mui/icons-material/Loop';
 import { firestore } from 'config/firebase';
 import { collection, CollectionReference, orderBy, query } from 'firebase/firestore';
+import { useTheme } from '@emotion/react';
 
 export type Players = {
     players: Player[];
 };
 
 function TournamentList() {
+    const theme = useTheme();
     const { data, isLoading } = useTournamentListQuery(
         query(
             collection(firestore, 'tournaments'),
@@ -35,6 +37,7 @@ function TournamentList() {
     );
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const matches = useMediaQuery(get(theme, 'breakpoints').down('sm'));
 
     if (isLoading) {
         return <CircularProgress size={24} />;
@@ -46,12 +49,17 @@ function TournamentList() {
                 <TableHead>
                     <TableRow>
                         <TableCell>{t('Nazwa')}</TableCell>
-                        <TableCell width={200} align="center">
-                            {t('Data startu')}
-                        </TableCell>
-                        <TableCell width={200} align="center">
-                            {t('Data zakończenia')}
-                        </TableCell>
+                        {!matches && (
+                            <TableCell width={200} align="center">
+                                {t('Data startu')}
+                            </TableCell>
+                        )}
+                        {!matches && (
+                            <TableCell width={200} align="center">
+                                {t('Data zakończenia')}
+                            </TableCell>
+                        )}
+
                         <TableCell width={100} align="center">
                             {t('Akcje')}
                         </TableCell>
@@ -74,12 +82,16 @@ function TournamentList() {
                                     )}
                                     <span className="ml-1">{name}</span>
                                 </TableCell>
-                                <TableCell align="center">
-                                    {startDate && format(new Date(startDate), dateTimeFormat)}
-                                </TableCell>
-                                <TableCell align="center">
-                                    {endDate && format(new Date(endDate), dateTimeFormat)}
-                                </TableCell>
+                                {!matches && (
+                                    <TableCell align="center">
+                                        {startDate && format(new Date(startDate), dateTimeFormat)}
+                                    </TableCell>
+                                )}
+                                {!matches && (
+                                    <TableCell align="center">
+                                        {endDate && format(new Date(endDate), dateTimeFormat)}
+                                    </TableCell>
+                                )}
                                 <TableCell align="center">
                                     <IconButton
                                         size="small"

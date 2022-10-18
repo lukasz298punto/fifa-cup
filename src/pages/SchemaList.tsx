@@ -1,28 +1,33 @@
-import { CircularProgress, Grid, IconButton, Paper } from '@mui/material';
+import { useTheme } from '@emotion/react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { CircularProgress, IconButton, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import { TableCell } from 'style/components';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Loading } from 'components/Loading';
+import { TableContainer } from 'components/TableContainer';
 import { useIsLogged, useSchemaListQuery } from 'hooks';
-import { find, map, size } from 'lodash';
+import { find, get, map, size } from 'lodash';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
+import { TableCell } from 'style/components';
 import { GroupStageType } from 'types/global';
-import { useTranslation } from 'react-i18next';
-import { TableContainer } from 'components/TableContainer';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 
 function SchemaList() {
     const { data, isLoading } = useSchemaListQuery();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const isLogged = useIsLogged();
+    const theme = useTheme();
+    const matches = useMediaQuery(get(theme, 'breakpoints').down('sm'));
 
-    if (!isLogged) {
-        navigate(generatePath(routes.HOME.path));
-    }
+    useEffect(() => {
+        if (!isLogged) {
+            navigate(generatePath(routes.HOME.path));
+        }
+    }, [isLogged, navigate]);
 
     if (isLoading) {
         return <CircularProgress size={24} />;
@@ -34,10 +39,12 @@ function SchemaList() {
                 <TableHead>
                     <TableRow>
                         <TableCell>{t('Nazwa')}</TableCell>
-                        <TableCell align="right">{t('Ilość faz')}</TableCell>
-                        <TableCell align="center" width={150}>
-                            {t('Faza grupowa')}
-                        </TableCell>
+                        {!matches && <TableCell align="right">{t('Ilość faz')}</TableCell>}
+                        {!matches && (
+                            <TableCell align="center" width={150}>
+                                {t('Faza grupowa')}
+                            </TableCell>
+                        )}
                         <TableCell width={100} align="center">
                             {t('Akcje')}
                         </TableCell>
@@ -52,12 +59,14 @@ function SchemaList() {
                                 <TableCell component="th" scope="row">
                                     {name}
                                 </TableCell>
-                                <TableCell align="right">{size(phases)}</TableCell>
-                                <TableCell align="center">
-                                    {find(phases, { isGroupStage: GroupStageType.GroupStage })
-                                        ? t('Tak')
-                                        : t('Nie')}
-                                </TableCell>
+                                {!matches && <TableCell align="right">{size(phases)}</TableCell>}
+                                {!matches && (
+                                    <TableCell align="center">
+                                        {find(phases, { isGroupStage: GroupStageType.GroupStage })
+                                            ? t('Tak')
+                                            : t('Nie')}
+                                    </TableCell>
+                                )}
                                 <TableCell align="center">
                                     <IconButton
                                         size="small"
