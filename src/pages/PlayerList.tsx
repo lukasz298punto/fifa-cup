@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TableCell } from 'style/components';
+import { SmallTableCell as TableCell } from 'style/components';
 import { Player } from 'types/global';
 
 export type Players = {

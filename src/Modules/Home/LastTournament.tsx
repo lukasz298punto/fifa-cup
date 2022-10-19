@@ -11,7 +11,7 @@ import { getTournamentSequence } from 'helpers/calculate';
 import { findPlayerNameById } from 'helpers/global';
 import { useActivePlayerListQuery } from 'hooks';
 import useTournamentListQuery from 'hooks/useTournamentListQuery';
-import { map } from 'lodash';
+import { compact, map } from 'lodash';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableCell } from 'style/components';
@@ -31,7 +31,7 @@ function LastTournament() {
     );
 
     const calculate = useMemo(() => {
-        return getTournamentSequence(tournamentData?.docs?.[0]?.data()?.phases);
+        return compact(getTournamentSequence(tournamentData?.docs?.[0]?.data()?.phases));
     }, [tournamentData?.docs]);
 
     if (tournamentDataIsLoading || isLoading) {

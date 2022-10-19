@@ -1,11 +1,13 @@
+import { useTheme } from '@emotion/react';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import SaveIcon from '@mui/icons-material/Save';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { Button, CircularProgress, Paper } from '@mui/material';
+import { Button, CircularProgress, Paper, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import clsx from 'clsx';
 import { Loading } from 'components/Loading';
 import { TabPanel } from 'components/TabPanel';
 import { dateTimeFormat } from 'constants/global';
@@ -16,7 +18,7 @@ import {
     useTournamentQuery,
     useUpdateTournamentMutation,
 } from 'hooks';
-import { map, range } from 'lodash';
+import { get, map, range } from 'lodash';
 import 'lodash.combinations';
 import { CupPhase, GroupsPhase } from 'Modules/Tournament';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -36,7 +38,8 @@ function TournamentDetail() {
     const [tab, setTab] = useState('0');
     const { mutate, isLoading } = useUpdateTournamentMutation(id as string);
     const { t } = useTranslation();
-
+    const theme = useTheme();
+    const matches = useMediaQuery(get(theme, 'breakpoints').down('sm'));
     const isLogged = useIsLogged();
 
     const { data: tournamentData, isLoading: tournamentIsLoading } = useTournamentQuery(
@@ -53,7 +56,12 @@ function TournamentDetail() {
         return schemaData?.data();
     }, [schemaData]);
 
-    const { control, handleSubmit, reset } = useForm<TournamentSchema>();
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { isDirty },
+    } = useForm<TournamentSchema>();
 
     useEffect(() => {
         if (tournament && schema) {
@@ -146,7 +154,15 @@ function TournamentDetail() {
                             )}
                         </TabPanel>
                     ))}
-                <Box className="px-6 pb-4 flex">
+                <Box className={clsx('px-6 pb-4 flex', matches && 'flex-col')}>
+                    {isLogged && !tournament?.endDate && (
+                        <Button
+                            onClick={handleOnSubmit()}
+                            startIcon={isLoading ? <CircularProgress size={24} /> : <SaveIcon />}
+                            color={isDirty ? 'error' : 'primary'}
+                            children={t('Zapisz zmiany')}
+                        />
+                    )}
                     {isLogged && tournament?.startDate && !tournament?.endDate && (
                         <Button
                             onClick={handleOnSubmit(UpdateType.End)}
@@ -162,16 +178,6 @@ function TournamentDetail() {
                             color="primary"
                             children={t('Wystartuj turniej')}
                         />
-                    )}
-                    {isLogged && (
-                        <Loading loading={isLoading}>
-                            <Button
-                                onClick={handleOnSubmit()}
-                                startIcon={<SaveIcon />}
-                                color="primary"
-                                children={t('Zapisz zmiany')}
-                            />
-                        </Loading>
                     )}
                 </Box>
             </Paper>

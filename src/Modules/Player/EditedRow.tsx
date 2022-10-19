@@ -2,9 +2,8 @@ import CancelIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Box, IconButton, MenuItem, Select, TextField } from '@mui/material';
+import { Box, CircularProgress, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import TableRow from '@mui/material/TableRow';
-import { Loading } from 'components/Loading';
 import { useIsLogged, useStorePlayerMutation, useUpdatePlayerMutation } from 'hooks';
 import { Players } from 'pages/PlayerList';
 import React from 'react';
@@ -16,10 +15,9 @@ import {
     UseFormTrigger,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'routing/routes';
-import { TableCell } from 'style/components';
+import { SmallTableCell as TableCell } from 'style/components';
 
 type Props = {
     isEdited: boolean;
@@ -139,55 +137,54 @@ function EditedRow({
                         </>
                     ) : (
                         <>
-                            <Loading loading={updateIsLoading || storeIsLoading} className="m-0">
-                                {(loading) => (
-                                    <IconButton
-                                        color="primary"
-                                        size="small"
-                                        disabled={loading}
-                                        onClick={async () => {
-                                            await trigger([
-                                                `players.${index}.lastName`,
-                                                `players.${index}.firstName`,
-                                            ]);
+                            <IconButton
+                                color="primary"
+                                size="small"
+                                onClick={async () => {
+                                    await trigger([
+                                        `players.${index}.lastName`,
+                                        `players.${index}.firstName`,
+                                    ]);
 
-                                            const { active, firstName, lastName } = getValues(
-                                                `players.${index}`
-                                            );
+                                    const { active, firstName, lastName } = getValues(
+                                        `players.${index}`
+                                    );
 
-                                            if (field.id) {
-                                                updateMutate(
-                                                    {
-                                                        active,
-                                                        firstName,
-                                                        lastName,
-                                                    },
-                                                    {
-                                                        onSuccess: () => {
-                                                            onCancel(field, index);
-                                                        },
-                                                    }
-                                                );
-                                            } else {
-                                                storeMutate(
-                                                    {
-                                                        active,
-                                                        firstName,
-                                                        lastName,
-                                                    },
-                                                    {
-                                                        onSuccess: () => {
-                                                            onCancel(field, index);
-                                                        },
-                                                    }
-                                                );
+                                    if (field.id) {
+                                        updateMutate(
+                                            {
+                                                active,
+                                                firstName,
+                                                lastName,
+                                            },
+                                            {
+                                                onSuccess: () => {
+                                                    onCancel(field, index);
+                                                },
                                             }
-                                        }}
-                                    >
-                                        <SaveIcon />
-                                    </IconButton>
+                                        );
+                                    } else {
+                                        storeMutate(
+                                            {
+                                                active,
+                                                firstName,
+                                                lastName,
+                                            },
+                                            {
+                                                onSuccess: () => {
+                                                    onCancel(field, index);
+                                                },
+                                            }
+                                        );
+                                    }
+                                }}
+                            >
+                                {updateIsLoading || storeIsLoading ? (
+                                    <CircularProgress size={24} />
+                                ) : (
+                                    <SaveIcon />
                                 )}
-                            </Loading>
+                            </IconButton>
                             <IconButton
                                 size="small"
                                 onClick={() => {

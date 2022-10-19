@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles';
 import { green, red } from '@mui/material/colors';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,9 +12,8 @@ import { isEmpty, map } from 'lodash';
 import 'lodash.combinations';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableCell as TableCellPrimary } from 'style/components';
+import { SmallTableCell as TableCell } from 'style/components';
 import { Player, Result } from 'types/global';
-import { tableCellClasses } from '@mui/material/TableCell';
 
 type ScoreResult = {
     id: string;
@@ -29,17 +27,6 @@ type ScoreResult = {
     brMinus: number;
     brDiff: number;
 };
-
-const TableCell = styled(TableCellPrimary)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        fontSize: 11,
-        padding: 6,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 11,
-        padding: 6,
-    },
-}));
 
 type Props = {
     players: (Omit<Player, 'active'> & { formId: string })[];
@@ -64,6 +51,7 @@ function ScoreTable({
         if (isEmpty(results)) {
             return map(players, (player) => ({
                 id: player.id || '',
+                formId: player.formId,
                 pkt: 0,
                 m: 0,
                 w: 0,
@@ -111,50 +99,57 @@ function ScoreTable({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {map(result, ({ id, pkt, m, w, r, p, brPlus, brMinus, brDiff }, index) => (
-                        <TableRow
-                            key={id}
-                            style={{
-                                backgroundColor: promotion > index ? green[100] : red[100],
-                            }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {id ? (
-                                    findPlayerNameById(id, allActivePlayers)
-                                ) : (
-                                    <RoundAddButton
-                                        onAdd={() => {
-                                            onAddPlayer(index);
-                                        }}
-                                    />
-                                )}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center font-bold">
-                                {pkt}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {m}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {w}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {r}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {p}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {brPlus}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {brMinus}
-                            </TableCell>
-                            <TableCell component="th" scope="row" className="text-center">
-                                {brDiff}
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {map(
+                        result,
+                        ({ formId, id, pkt, m, w, r, p, brPlus, brMinus, brDiff }, index) => (
+                            <TableRow
+                                key={formId}
+                                style={{
+                                    backgroundColor: promotion > index ? green[100] : red[100],
+                                }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {id ? (
+                                        findPlayerNameById(id, allActivePlayers)
+                                    ) : (
+                                        <RoundAddButton
+                                            onAdd={() => {
+                                                onAddPlayer(index);
+                                            }}
+                                        />
+                                    )}
+                                </TableCell>
+                                <TableCell
+                                    component="th"
+                                    scope="row"
+                                    className="text-center font-bold"
+                                >
+                                    {pkt}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {m}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {w}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {r}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {p}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {brPlus}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {brMinus}
+                                </TableCell>
+                                <TableCell component="th" scope="row" className="text-center">
+                                    {brDiff}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>

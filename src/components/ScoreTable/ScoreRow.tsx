@@ -1,11 +1,13 @@
+import { useTheme } from '@emotion/react';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Divider, Grid, IconButton, TextField } from '@mui/material';
+import { Divider, Grid, IconButton, TextField, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
+import clsx from 'clsx';
 import { PlayerPicker } from 'components/PlayerPicker';
 import { RoundAddButton } from 'components/RoundAddButton';
 import { findPlayerNameById, parseInputNumber } from 'helpers/global';
 import { useActivePlayerListQuery, useIsLogged } from 'hooks';
-import { forEach, range } from 'lodash';
+import { forEach, get, range } from 'lodash';
 import 'lodash.combinations';
 import React, { useCallback, useState } from 'react';
 import { Control, Controller, useWatch } from 'react-hook-form';
@@ -38,7 +40,11 @@ function ScoreRow({
     const { t } = useTranslation();
     const [teamAOpen, setTeamAOpen] = useState(false);
     const [teamBOpen, setTeamBOpen] = useState(false);
+    const [teamARefreshOpen, setTeamARefreshOpen] = useState(false);
+    const [teamBRefreshOpen, setTeamBRefreshOpen] = useState(false);
     const isLogged = useIsLogged();
+    const theme = useTheme();
+    const matches = useMediaQuery(get(theme, 'breakpoints').down('sm'));
 
     const handleTeamAClose = useCallback(() => {
         setTeamAOpen(false);
@@ -46,6 +52,14 @@ function ScoreRow({
 
     const handleTeamBClose = useCallback(() => {
         setTeamBOpen(false);
+    }, []);
+
+    const handleTeamARefreshClose = useCallback(() => {
+        setTeamARefreshOpen(false);
+    }, []);
+
+    const handleTeamBRefreshClose = useCallback(() => {
+        setTeamBRefreshOpen(false);
     }, []);
 
     const getFormName = (name: string): any => `${formName}.${name}`;
@@ -106,31 +120,39 @@ function ScoreRow({
                                         />
                                     </>
                                 ) : (
-                                    <span className="flex items-center">
+                                    <span
+                                        className={clsx(
+                                            matches ? 'flex-col items-end' : 'flex  items-center',
+                                            'flex'
+                                        )}
+                                    >
                                         {!isGroup && isLogged && (
                                             <>
                                                 <PlayerPicker
-                                                    onClose={handleTeamAClose}
-                                                    open={teamAOpen}
+                                                    onClose={handleTeamARefreshClose}
+                                                    open={teamARefreshOpen}
                                                     onPick={(player) => {
                                                         onChange(player.id);
-                                                        handleTeamAClose();
+                                                        handleTeamARefreshClose();
                                                     }}
-                                                    disabledPlayers={disabledPlayers}
                                                 />
                                                 <IconButton
                                                     className="p-0"
                                                     size="small"
                                                     color="primary"
                                                     onClick={() => {
-                                                        setTeamAOpen(true);
+                                                        setTeamARefreshOpen(true);
                                                     }}
                                                 >
                                                     <RefreshIcon />
                                                 </IconButton>
                                             </>
                                         )}
-                                        {findPlayerNameById(value, data?.docs)}
+                                        <span
+                                            className={clsx(matches && !isGroup && 'max-w-[50px]')}
+                                        >
+                                            {findPlayerNameById(value, data?.docs)}
+                                        </span>
                                     </span>
                                 )}
                             </span>
@@ -282,25 +304,35 @@ function ScoreRow({
                                         />
                                     </>
                                 ) : (
-                                    <span className="flex items-center">
-                                        {findPlayerNameById(value, data?.docs)}
+                                    <span
+                                        className={clsx(
+                                            matches ? 'flex-col items-start' : 'flex  items-center',
+                                            'flex'
+                                        )}
+                                    >
+                                        <span
+                                            className={clsx(
+                                                matches && !isGroup && 'order-1 max-w-[50px]'
+                                            )}
+                                        >
+                                            {findPlayerNameById(value, data?.docs)}
+                                        </span>
                                         {!isGroup && isLogged && (
                                             <>
                                                 <PlayerPicker
-                                                    onClose={handleTeamBClose}
-                                                    open={teamBOpen}
+                                                    onClose={handleTeamBRefreshClose}
+                                                    open={teamBRefreshOpen}
                                                     onPick={(player) => {
                                                         onChange(player.id);
-                                                        handleTeamBClose();
+                                                        handleTeamBRefreshClose();
                                                     }}
-                                                    disabledPlayers={disabledPlayers}
                                                 />
                                                 <IconButton
                                                     className="p-0"
                                                     size="small"
                                                     color="primary"
                                                     onClick={() => {
-                                                        setTeamBOpen(true);
+                                                        setTeamBRefreshOpen(true);
                                                     }}
                                                 >
                                                     <RefreshIcon />

@@ -94,11 +94,11 @@ function Statistics() {
             },
             mostBrMinus: {
                 player: getPlayerName(mostBrMinus[0]?.id),
-                value: mostBrMinus[0]?.brPlus,
+                value: mostBrMinus[0]?.brMinus,
             },
             leastBrMinus: {
                 player: getPlayerName(leastBrMinus[0]?.id),
-                value: leastBrMinus[0]?.brPlus,
+                value: leastBrMinus[0]?.brMinus,
             },
             mostW: {
                 player: getPlayerName(mostW[0]?.id),

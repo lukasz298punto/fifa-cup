@@ -105,6 +105,7 @@ export const getAllPlayersResults = (playersIds: (string | undefined)[], results
 
         return {
             id: player,
+            formId: player,
             pkt: reduce(playerResult, (acc, { pkt }) => acc + pkt, 0),
             m: size(playerResult),
             w: size(filter(playerResult, { status: matchStatus.W })),
