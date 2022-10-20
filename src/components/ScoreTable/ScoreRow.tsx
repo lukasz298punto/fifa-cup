@@ -149,7 +149,9 @@ function ScoreRow({
                                             </>
                                         )}
                                         <span
-                                            className={clsx(matches && !isGroup && 'max-w-[50px]')}
+                                            className={clsx(
+                                                matches && !isGroup && isLogged && 'max-w-[50px]'
+                                            )}
                                         >
                                             {findPlayerNameById(value, data?.docs)}
                                         </span>
@@ -312,7 +314,10 @@ function ScoreRow({
                                     >
                                         <span
                                             className={clsx(
-                                                matches && !isGroup && 'order-1 max-w-[50px]'
+                                                matches &&
+                                                    !isGroup &&
+                                                    isLogged &&
+                                                    'order-1 max-w-[50px]'
                                             )}
                                         >
                                             {findPlayerNameById(value, data?.docs)}
