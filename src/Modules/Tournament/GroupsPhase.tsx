@@ -27,18 +27,21 @@ function GroupsPhase({ schema, index, control }: Props) {
 
     return (
         <>
-            <ButtonGroup variant="outlined">
-                {map(phase.groups, (group, index) => (
-                    <Button
-                        key={index}
-                        variant={tab === String(index) ? 'contained' : 'outlined'}
-                        size="small"
-                        onClick={() => handleClick(String(index))}
-                    >
-                        {t('Grupa')} {groupSymbol[index]}
-                    </Button>
-                ))}
-            </ButtonGroup>
+            <div className="overflow-x-auto">
+                <ButtonGroup variant="outlined">
+                    {map(phase.groups, (group, index) => (
+                        <Button
+                            className="whitespace-nowrap"
+                            key={index}
+                            variant={tab === String(index) ? 'contained' : 'outlined'}
+                            size="small"
+                            onClick={() => handleClick(String(index))}
+                        >
+                            {t('Grupa')} {groupSymbol[index]}
+                        </Button>
+                    ))}
+                </ButtonGroup>
+            </div>
             {map(phase.groups, (group, i) => (
                 <TabPanel key={i} value={tab} index={String(i)}>
                     <Group

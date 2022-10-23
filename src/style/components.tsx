@@ -15,9 +15,9 @@ export const TableCell = styled(MuiTableCell)(({ theme }) => ({
 
 export const SmallTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        padding: 6,
+        padding: 5,
     },
     [`&.${tableCellClasses.body}`]: {
-        padding: 6,
+        padding: 5,
     },
 }));
