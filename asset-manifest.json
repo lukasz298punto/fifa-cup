@@ -1,28 +1,27 @@
 {
   "files": {
-    "main.css": "/fifa-cup/static/css/main.71c15979.css",
-    "main.js": "/fifa-cup/static/js/main.ff2774a6.js",
+    "main.css": "/fifa-cup/static/css/main.2ac12e5e.css",
+    "main.js": "/fifa-cup/static/js/main.464b49c3.js",
     "static/js/63.66ee5966.chunk.js": "/fifa-cup/static/js/63.66ee5966.chunk.js",
     "static/js/166.e08df879.chunk.js": "/fifa-cup/static/js/166.e08df879.chunk.js",
     "static/js/105.d6f67c83.chunk.js": "/fifa-cup/static/js/105.d6f67c83.chunk.js",
     "static/js/415.f7b4da65.chunk.js": "/fifa-cup/static/js/415.f7b4da65.chunk.js",
-    "static/js/208.dcdc7dcc.chunk.js": "/fifa-cup/static/js/208.dcdc7dcc.chunk.js",
+    "static/js/208.ae1f233d.chunk.js": "/fifa-cup/static/js/208.ae1f233d.chunk.js",
     "static/js/787.85eaca4d.chunk.js": "/fifa-cup/static/js/787.85eaca4d.chunk.js",
     "static/js/878.7e785780.chunk.js": "/fifa-cup/static/js/878.7e785780.chunk.js",
-    "service-worker.js": "/fifa-cup/service-worker.js",
     "index.html": "/fifa-cup/index.html",
-    "main.71c15979.css.map": "/fifa-cup/static/css/main.71c15979.css.map",
-    "main.ff2774a6.js.map": "/fifa-cup/static/js/main.ff2774a6.js.map",
+    "main.2ac12e5e.css.map": "/fifa-cup/static/css/main.2ac12e5e.css.map",
+    "main.464b49c3.js.map": "/fifa-cup/static/js/main.464b49c3.js.map",
     "63.66ee5966.chunk.js.map": "/fifa-cup/static/js/63.66ee5966.chunk.js.map",
     "166.e08df879.chunk.js.map": "/fifa-cup/static/js/166.e08df879.chunk.js.map",
     "105.d6f67c83.chunk.js.map": "/fifa-cup/static/js/105.d6f67c83.chunk.js.map",
     "415.f7b4da65.chunk.js.map": "/fifa-cup/static/js/415.f7b4da65.chunk.js.map",
-    "208.dcdc7dcc.chunk.js.map": "/fifa-cup/static/js/208.dcdc7dcc.chunk.js.map",
+    "208.ae1f233d.chunk.js.map": "/fifa-cup/static/js/208.ae1f233d.chunk.js.map",
     "787.85eaca4d.chunk.js.map": "/fifa-cup/static/js/787.85eaca4d.chunk.js.map",
     "878.7e785780.chunk.js.map": "/fifa-cup/static/js/878.7e785780.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.71c15979.css",
-    "static/js/main.ff2774a6.js"
+    "static/css/main.2ac12e5e.css",
+    "static/js/main.464b49c3.js"
   ]
 }
